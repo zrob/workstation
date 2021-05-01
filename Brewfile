@@ -3,6 +3,7 @@ brew "wget"
 brew "jq"
 brew "watch"
 brew "mdcat"
+brew "tree"
 
 brew "python", link: true, overwrite: true
 
