@@ -33,8 +33,7 @@ if ! diff "${desired_prefs}" "${current_prefs}"; then
 	cp -f "${desired_prefs}" "${current_prefs}"
 fi
 
-# Reload terminal helper
-
+# Manual followup
 
 echo
 echo "+==========================+"
