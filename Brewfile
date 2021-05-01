@@ -2,6 +2,7 @@ brew "git"
 brew "wget"
 brew "jq"
 brew "watch"
+brew "mdcat"
 
 brew "python", link: true, overwrite: true
 
