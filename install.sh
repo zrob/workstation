@@ -35,5 +35,16 @@ fi
 
 # Reload terminal helper
 
-echo "make sure to reload terminal"
+
+echo
+echo "+==========================+"
+echo "Great job! Here's some extra setup"
+echo "+==========================+"
+echo
+
+echo "Configure iTerm (Preferences > General > Preferences)"
+echo "${__dir}/assets/iterm"
+echo
+
+echo "Reload Terminal:"
 echo "source ~/.zshrc"
