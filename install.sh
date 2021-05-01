@@ -45,5 +45,9 @@ echo "Configure iTerm (Preferences > General > Preferences)"
 echo "${__dir}/assets/iterm"
 echo
 
+echo "Install Powerlevel10k fonts"
+echo "p10k configure"
+echo
+
 echo "Reload Terminal:"
 echo "source ~/.zshrc"
