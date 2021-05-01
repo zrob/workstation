@@ -4,6 +4,7 @@ brew "jq"
 brew "watch"
 brew "mdcat"
 brew "tree"
+brew "fzf"
 
 brew "python", link: true, overwrite: true
 

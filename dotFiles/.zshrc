@@ -82,6 +82,7 @@ plugins=(
     git-prompt
     z
     zsh_reload
+    fzf
     )
 
 source $ZSH/oh-my-zsh.sh
