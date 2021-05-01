@@ -1,0 +1,27 @@
+# This is Git's per-user configuration file.
+[user]
+  name = Zach Robinson
+  email = zach.robinson@gmail.com
+
+[alias]
+  ci = commit --verbose
+  co = checkout
+  ds = "diff --staged"
+  lg = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an & %cn%Creset'"
+  squash = "commit --squash"
+  st = status
+  unstage = "reset HEAD"
+
+[merge]
+  # Display common-ancestor blocks in conflict hunks
+  conflictStyle = diff3
+
+[url "git@github.com:"]
+  pushInsteadOf = https://github.com/
+  pushInsteadOf = git://github.com/
+
+[interactive]
+  diffFilter = /usr/local/share/git-core/contrib/diff-highlight/diff-highlight
+
+[pull]
+	rebase = true
