@@ -11,11 +11,17 @@ __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 brew bundle install
 
-# Install oh my zsh and powerlevel10k theme
+# Install and setup zsh
 
 if [ ! -d "${HOME}/.oh-my-zsh" ]; then
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended"
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+fi
+
+custom_dir=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}
+
+if [ ! -d ${custom_dir}/themes/powerlevel10k ]; then
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
+        ${custom_dir}/themes/powerlevel10k
 fi
 
 # Copy dotfiles
