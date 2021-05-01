@@ -11,9 +11,18 @@ __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 brew bundle install
 
+# Install oh my zsh and powerlevel10k theme
+
+if [ ! -d "${HOME}/.oh-my-zsh" ]; then
+    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended"
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+fi
+
 # Copy dotfiles
 
 cp -f ${__dir}/dotFiles/.gitconfig ~/.gitconfig
+cp -f ${__dir}/dotFiles/.zshrc ~/.zshrc
+cp -f ${__dir}/dotFiles/.p10k.zsh ~/.p10k.zsh
 
 # Setup spectacle
 
@@ -23,3 +32,8 @@ current_prefs="${HOME}/Library/Preferences/com.divisiblebyzero.Spectacle.plist"
 if ! diff "${desired_prefs}" "${current_prefs}"; then
 	cp -f "${desired_prefs}" "${current_prefs}"
 fi
+
+# Reload terminal helper
+
+echo "make sure to reload terminal"
+echo "source ~/.zshrc"
