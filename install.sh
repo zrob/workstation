@@ -15,3 +15,11 @@ brew bundle install
 
 cp -f ${__dir}/dotFiles/.gitconfig ~/.gitconfig
 
+# Setup spectacle
+
+desired_prefs="${__dir}/assets/com.divisiblebyzero.Spectacle.plist"
+current_prefs="${HOME}/Library/Preferences/com.divisiblebyzero.Spectacle.plist"
+
+if ! diff "${desired_prefs}" "${current_prefs}"; then
+	cp -f "${desired_prefs}" "${current_prefs}"
+fi
