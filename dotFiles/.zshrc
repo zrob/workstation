@@ -83,6 +83,8 @@ plugins=(
     z
     zsh_reload
     fzf
+    zsh-autosuggestions
+    zsh-syntax-highlighting # must be last
     )
 
 source $ZSH/oh-my-zsh.sh

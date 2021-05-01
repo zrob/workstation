@@ -24,6 +24,16 @@ if [ ! -d ${custom_dir}/themes/powerlevel10k ]; then
         ${custom_dir}/themes/powerlevel10k
 fi
 
+if [ ! -d ${custom_dir}/plugins/zsh-syntax-highlighting ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
+        ${custom_dir}/plugins/zsh-syntax-highlighting
+fi
+
+if [ ! -d ${custom_dir}/plugins/zsh-autosuggestions ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions.git \
+        ${custom_dir}/plugins/zsh-autosuggestions
+fi
+
 # Copy dotfiles
 
 cp -f ${__dir}/dotFiles/.gitconfig ~/.gitconfig

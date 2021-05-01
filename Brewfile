@@ -5,6 +5,7 @@ brew "watch"
 brew "mdcat"
 brew "tree"
 brew "fzf"
+brew "zsh-syntax-highlighting"
 
 brew "python", link: true, overwrite: true
 
