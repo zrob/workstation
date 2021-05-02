@@ -59,7 +59,6 @@ mkdir -p "${GOPATH}/bin"
 cp -f "${__dir}/dotFiles/.gitconfig" ~/.gitconfig
 cp -f "${__dir}/dotFiles/.zshrc" ~/.zshrc
 cp -f "${__dir}/dotFiles/.p10k.zsh" ~/.p10k.zsh
-cp -f "${__dir}/dotFiles/.zshenv" ~/.zshenv
 cp -f "${__dir}/dotFiles/.nanorc" ~/.nanorc
 
 # Setup spectacle
