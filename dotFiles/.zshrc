@@ -102,8 +102,8 @@ export PATH="${PATH}:${GOPATH}/bin"
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
+alias k=kubectl
+alias g=git
 
 eval $(thefuck --alias)
 
