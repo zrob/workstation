@@ -10,6 +10,7 @@ brew "the_silver_searcher"
 brew "thefuck"
 
 brew "python", link: true, overwrite: true
+brew "go"
 
 cask "google-chrome"
 cask "caffeine"

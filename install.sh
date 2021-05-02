@@ -48,6 +48,12 @@ else
     popd
 fi
 
+# setup go
+GOPATH="${HOME}/workspace/go"
+mkdir -p "${GOPATH}/src"
+mkdir -p "${GOPATH}/bin"
+
+
 # Copy dotfiles
 
 cp -f "${__dir}/dotFiles/.gitconfig" ~/.gitconfig
