@@ -107,6 +107,10 @@ alias g=git
 
 eval $(thefuck --alias)
 
+# kubectl auto-complete and setup for k alias
+source <(kubectl completion zsh)
+complete -F __start_kubectl k
+
 # Use config that is local to a machine, not checked in
 [ -f "${HOME}/.config.personal" ] && \
   source "${HOME}/.config.personal"
