@@ -4,15 +4,15 @@
   email = zach.robinson@gmail.com
 
 [alias]
+  a = add -p
   ci = commit --verbose
   co = checkout
   ds = "diff --staged"
   lg = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an & %cn%Creset'"
-  squash = "commit --squash"
   s = status -s
+  squash = "commit --squash"
   st = status -s
   unstage = "reset HEAD"
-  a = add -p
 
 [url "git@github.com:"]
   pushInsteadOf = https://github.com/
