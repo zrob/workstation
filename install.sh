@@ -70,6 +70,12 @@ if ! diff "${desired_prefs}" "${current_prefs}"; then
 	cp -f "${desired_prefs}" "${current_prefs}"
 fi
 
+# Setup personal config and bin
+
+mkdir -p "${HOME}/bin.personal"
+[ ! -f "${HOME}/.config.personal" ] && \
+    cp "${__dir}/assets/config.personal-template" ~/.config.personal
+
 # Manual followup
 
 echo
