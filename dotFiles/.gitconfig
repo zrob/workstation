@@ -12,6 +12,7 @@
   s = status -s
   st = status -s
   unstage = "reset HEAD"
+  a = add -p
 
 [url "git@github.com:"]
   pushInsteadOf = https://github.com/
