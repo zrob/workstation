@@ -9,6 +9,7 @@
   ds = "diff --staged"
   lg = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an & %cn%Creset'"
   squash = "commit --squash"
+  s = status -s
   st = status -s
   unstage = "reset HEAD"
 
