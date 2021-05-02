@@ -1,0 +1,26 @@
+##  syntax highlighting for git commit messages
+syntax "gitcommit" "patch" "COMMIT_EDITMSG$"
+
+# overlong lines
+color red "^.{70,}.+$"
+
+# comment
+color white "^#.*$"
+
+# branch names and status
+color brightblue "^# On branch .+$"
+color brightblue "^# Your branch .+$"
+
+# change list headings
+color green "^# Changes to be committed:"
+color red "^# Changes not staged for commit:"
+color brightblue "^# Untracked files:"
+# change list files
+color brightcyan "^#[^ a-zA-Z0-9][^ ].*$"
+
+# diff
+color brightgreen "^\+.*"
+color brightred "^-.*"
+color brightmagenta "^(diff|index|---|\+\+\+).*"
+color cyan "^index.*"
+color yellow "@@.*"
