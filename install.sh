@@ -21,38 +21,38 @@ fi
 
 custom_dir=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}
 
-if [ ! -d ${custom_dir}/themes/powerlevel10k ]; then
+if [ ! -d "${custom_dir}/themes/powerlevel10k" ]; then
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
-        ${custom_dir}/themes/powerlevel10k
+        "${custom_dir}/themes/powerlevel10k"
 else
-    pushd ${custom_dir}/themes/powerlevel10k
+    pushd "${custom_dir}/themes/powerlevel10k"
         git pull
     popd
 fi
 
-if [ ! -d ${custom_dir}/plugins/zsh-syntax-highlighting ]; then
+if [ ! -d "${custom_dir}/plugins/zsh-syntax-highlighting" ]; then
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
-        ${custom_dir}/plugins/zsh-syntax-highlighting
+        "${custom_dir}/plugins/zsh-syntax-highlighting"
 else
-    pushd ${custom_dir}/plugins/zsh-syntax-highlighting
+    pushd "${custom_dir}/plugins/zsh-syntax-highlighting"
         git pull
     popd
 fi
 
-if [ ! -d ${custom_dir}/plugins/zsh-autosuggestions ]; then
+if [ ! -d "${custom_dir}/plugins/zsh-autosuggestions" ]; then
     git clone https://github.com/zsh-users/zsh-autosuggestions.git \
-        ${custom_dir}/plugins/zsh-autosuggestions
+        "${custom_dir}/plugins/zsh-autosuggestions"
 else
-    pushd ${custom_dir}/plugins/zsh-autosuggestions
+    pushd "${custom_dir}/plugins/zsh-autosuggestions"
         git pull
     popd
 fi
 
 # Copy dotfiles
 
-cp -f ${__dir}/dotFiles/.gitconfig ~/.gitconfig
-cp -f ${__dir}/dotFiles/.zshrc ~/.zshrc
-cp -f ${__dir}/dotFiles/.p10k.zsh ~/.p10k.zsh
+cp -f "${__dir}/dotFiles/.gitconfig" ~/.gitconfig
+cp -f "${__dir}/dotFiles/.zshrc" ~/.zshrc
+cp -f "${__dir}/dotFiles/.p10k.zsh" ~/.p10k.zsh
 
 # Setup spectacle
 
