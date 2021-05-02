@@ -48,11 +48,11 @@ else
     popd
 fi
 
-# setup go
+# Setup golang
+
 GOPATH="${HOME}/workspace/go"
 mkdir -p "${GOPATH}/src"
 mkdir -p "${GOPATH}/bin"
-
 
 # Copy dotfiles
 
