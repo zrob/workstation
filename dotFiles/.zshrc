@@ -110,7 +110,7 @@ eval $(thefuck --alias)
 # Use config that is local to a machine, not checked in
 [ -f "${HOME}/.config.personal" ] && \
   source "${HOME}/.config.personal"
-[ -d "${PATH}:${HOME}/bin.personal" ] && \
+[ -d "${HOME}/bin.personal" ] && \
   export PATH="${PATH}:${HOME}/bin.personal"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
