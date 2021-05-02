@@ -8,6 +8,7 @@ brew "fzf"
 brew "zsh-syntax-highlighting"
 brew "the_silver_searcher"
 brew "thefuck"
+brew "kind"
 
 brew "python", link: true, overwrite: true
 brew "go"
