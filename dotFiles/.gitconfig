@@ -5,6 +5,7 @@
 
 [alias]
   a = add -p
+  amend = commit --amend --no-edit
   ci = commit --verbose
   co = checkout
   ds = "diff --staged"
@@ -20,3 +21,6 @@
 
 [pull]
 	rebase = true
+
+[merge]
+  conflictStyle = diff3
