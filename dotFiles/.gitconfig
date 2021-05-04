@@ -5,12 +5,14 @@
 
 [alias]
   a = add -p
+  alias = "! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ / | grep -v ^alias"
   amend = commit --amend --no-edit
   ci = commit --verbose
   co = checkout
   ds = "diff --staged"
   lg = log --graph --decorate --oneline
   lol = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an & %cn%Creset'"
+  lod = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)%an & %cn%Creset'"
   s = status -s
   squash = "commit --squash"
   st = status -s
