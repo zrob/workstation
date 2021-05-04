@@ -14,8 +14,8 @@
   lol = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an & %cn%Creset'"
   lod = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)%an & %cn%Creset'"
   s = status --short --branch
-  squash = "commit --squash"
   st = status --short --branch
+  squash = "commit --squash"
   unstage = "reset HEAD"
 
 [url "git@github.com:"]
