@@ -27,3 +27,9 @@
 
 [merge]
   conflictStyle = diff3
+
+[core]
+  pager = $(brew --prefix git)/share/git-core/contrib/diff-highlight/diff-highlight | less
+
+[interactive]
+  diffFilter = $(brew --prefix git)/share/git-core/contrib/diff-highlight/diff-highlight
