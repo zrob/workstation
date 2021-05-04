@@ -9,7 +9,8 @@
   ci = commit --verbose
   co = checkout
   ds = "diff --staged"
-  lg = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an & %cn%Creset'"
+  lg = log --graph --decorate --oneline
+  lol = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an & %cn%Creset'"
   s = status -s
   squash = "commit --squash"
   st = status -s
