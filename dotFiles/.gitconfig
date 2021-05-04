@@ -13,9 +13,9 @@
   lg = log --graph --decorate --oneline
   lol = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an & %cn%Creset'"
   lod = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)%an & %cn%Creset'"
-  s = status -s
+  s = status --short --branch
   squash = "commit --squash"
-  st = status -s
+  st = status --short --branch
   unstage = "reset HEAD"
 
 [url "git@github.com:"]
