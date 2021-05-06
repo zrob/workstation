@@ -117,7 +117,7 @@ source "$(brew --prefix)/opt/chruby/share/chruby/auto.sh"
 
 # Setup hooks for config and binaries on local machine
 [[ ! -f "${HOME}/.localrc" ]] || source "${HOME}/.localrc"
-[[ ! -d "${HOME}/bin.personal" ]] || export PATH="${PATH}:${HOME}/bin.personal"
+[[ ! -d "${HOME}/bin" ]] || export PATH="${PATH}:${HOME}/bin"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

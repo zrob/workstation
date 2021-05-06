@@ -107,8 +107,8 @@ setup_spectacle() {
 setup_personal_hooks() {
     # setup a place to drop binaries on local workstation
     # that will be in path but not checked into this repo
-    # ~/bin.personal
-    mkdir -p "${HOME}/bin.personal"
+    # ~/bin
+    mkdir -p "${HOME}/bin"
 
     # setup a place to drop local config like env and alias
     # that will be sourced but not checked into this repo
