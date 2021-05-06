@@ -90,6 +90,7 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
+export PATH="${PATH}:${HOME}/.workstation/bin"
 
 export EDITOR=nano
 

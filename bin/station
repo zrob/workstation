@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+#set -o xtrace
+
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__filename="$(basename "${BASH_SOURCE[0]}")"
+__parent_dir="$(cd "$(dirname "${__dir}")" && pwd)"
+
+pull_behavior=true
+cd_behavior=false
+
+print_usage() {
+cat << EOF
+${__filename} -- workstation management
+
+Default is to pull latest changes and attempt install.
+
+Usage: ${__filename} [options]
+
+Options:
+  -l    Install local state without pulling first
+  -c    Provide helper to 'cd' to the workstation directory
+  -h    Display this help message
+EOF
+}
+
+cd_helper() {
+	echo -n "cd ${__parent_dir}" | pbcopy
+	
+	echo "cd ${__parent_dir}"
+	echo
+	echo "cmd+v. filled the command into your paste buffer."
+}
+
+main() {
+	if [[ $cd_behavior = true ]]; then
+		cd_helper
+		exit 0
+	fi
+	
+	cd "${__dir}/.."
+
+	if [[ $pull_behavior = true ]]; then
+		git pull
+	fi
+
+    ./install.sh
+}
+
+while getopts "hlc" opt; do
+case "${opt}" in
+	"h")
+		print_usage
+		exit 0
+		;;
+	"l")
+		pull_behavior=false
+		;;
+	"c")
+		cd_behavior=true
+		;;		
+	"?")
+		print_usage
+		exit 1
+		;;
+esac
+done
+shift $((OPTIND - 1))
+
+main "$@"
