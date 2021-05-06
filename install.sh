@@ -96,10 +96,10 @@ Great job! You win some extra setup!
 Configure iTerm (Preferences > General > Preferences)
 ${__dir}/assets/iterm
 
-Install Powerlevel10k fonts
+Install Powerlevel10k fonts (may need to remove ~/.p10k.zsh to trigger font install)
 p10k configure
 
-Reload Terminal:
+Reload Terminal
 source ~/.zshrc"
 EOF
 }
