@@ -15,10 +15,12 @@ setup_oh_my_zsh() {
     if [ ! -d "${HOME}/.oh-my-zsh" ]; then
         sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended"
     else
+        # this assumes oh my zsh is running well and setting $ZSH
+        # if things are broke, then may need to manually tinker
         "${ZSH}/tools/upgrade.sh"
     fi
 
-    custom_dir=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}
+    local custom_dir=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}
 
     if [ ! -d "${custom_dir}/themes/powerlevel10k" ]; then
         git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
@@ -49,9 +51,9 @@ setup_oh_my_zsh() {
 }
 
 setup_golang() {
-    GOPATH="${HOME}/workspace/go"
-    mkdir -p "${GOPATH}/src"
-    mkdir -p "${GOPATH}/bin"
+    local gopath="${HOME}/workspace/go"
+    mkdir -p "${gopath}/src"
+    mkdir -p "${gopath}/bin"
 }
 
 setup_dotfiles() {
