@@ -64,7 +64,8 @@ setup_ruby() {
 
     # install latest ruby
     echo "Installing ruby. Logs are in '${logfile}'"
-    ruby-install --cleanup --no-reinstall ruby > "$logfile" 2>&1
+    ruby-install --latest > "$logfile" 2>&1
+    ruby-install --cleanup --no-reinstall ruby >> "$logfile" 2>&1
 
     if ! grep "Ruby is already installed" "$logfile" >/dev/null; then
         installed_version=$(grep "Successfully installed ruby" "$logfile" | awk '{n=split($0,A,"\/"); print A[n]}')
