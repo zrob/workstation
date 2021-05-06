@@ -12,6 +12,8 @@ brew "kind"
 
 brew "python", link: true, overwrite: true
 brew "go"
+brew "chruby"
+brew "ruby-install"
 
 cask "google-chrome"
 cask "caffeine"

@@ -103,14 +103,17 @@ export PATH="${PATH}:${GOPATH}/bin"
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-alias k=kubectl
 alias g=git
 
 eval $(thefuck --alias)
 
+alias k=kubectl
 # kubectl auto-complete and setup for k alias
 source <(kubectl completion zsh)
 complete -F __start_kubectl k
+
+source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
+source "$(brew --prefix)/opt/chruby/share/chruby/auto.sh"
 
 # Setup hooks for config and binaries on local machine
 [[ ! -f "${HOME}/.localrc" ]] || source "${HOME}/.localrc"

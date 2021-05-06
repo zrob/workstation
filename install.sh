@@ -56,11 +56,42 @@ setup_golang() {
     mkdir -p "${gopath}/bin"
 }
 
+setup_ruby() {
+    local logfile="${__dir}/logs/ruby-install.log"
+    local installed_version
+
+    mkdir -p "${__dir}/logs"
+
+    # install latest ruby
+    echo "Installing ruby. Logs are in '${logfile}'"
+    ruby-install --cleanup --no-reinstall ruby > "$logfile" 2>&1
+
+    if ! grep "Ruby is already installed" "$logfile" >/dev/null; then
+        installed_version=$(grep "Successfully installed ruby" "$logfile" | awk '{n=split($0,A,"\/"); print A[n]}')
+        echo "$installed_version" > "${HOME}/.ruby-version"
+    else
+        installed_version=$(grep "Ruby is already installed" "$logfile" | awk '{n=split($0,A,"\/"); print A[n]}')
+        echo "$installed_version" > "${HOME}/.ruby-version"
+    fi
+
+    # chruby doesn't play nice with nounset
+    set +o nounset
+    source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
+    chruby $(cat "${HOME}/.ruby-version")
+    chruby
+    set -o nounset
+
+    gem install bundler --no-document
+
+    tail -n 1 "$logfile"
+}
+
 setup_dotfiles() {
     cp -f "${__dir}/dotFiles/.gitconfig" ~/.gitconfig
     cp -f "${__dir}/dotFiles/.zshrc" ~/.zshrc
     cp -f "${__dir}/dotFiles/.p10k.zsh" ~/.p10k.zsh
     cp -f "${__dir}/dotFiles/.nanorc" ~/.nanorc
+    cp -f "${__dir}/dotFiles/.gemrc" ~/.gemrc
 }
 
 setup_spectacle() {
@@ -108,6 +139,7 @@ main() {
     brew_bundle
     setup_oh_my_zsh
     setup_golang
+    setup_ruby
     setup_dotfiles
     setup_spectacle
     setup_personal_hooks
