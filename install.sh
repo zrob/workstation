@@ -63,10 +63,10 @@ cp -f "${__dir}/dotFiles/.nanorc" ~/.nanorc
 
 # Setup spectacle
 
-desired_prefs="${__dir}/assets/com.divisiblebyzero.Spectacle.plist"
-current_prefs="${HOME}/Library/Preferences/com.divisiblebyzero.Spectacle.plist"
+desired_prefs="${__dir}/assets/spectacle/Shortcuts.json"
+current_prefs="${HOME}/Library/Application Support/Spectacle/Shortcuts.json"
 
-if ! diff "${desired_prefs}" "${current_prefs}"; then
+if ! diff "${desired_prefs}" "${current_prefs}" >/dev/null 2&>1; then
 	cp -f "${desired_prefs}" "${current_prefs}"
 fi
 
