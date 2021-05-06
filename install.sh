@@ -73,10 +73,16 @@ setup_spectacle() {
 }
 
 setup_personal_hooks() {
+    # setup a place to drop binaries on local workstation
+    # that will be in path but not checked into this repo
+    # ~/bin.personal
     mkdir -p "${HOME}/bin.personal"
 
-    if [ ! -f "${HOME}/.config.personal" ]; then
-        cp "${__dir}/assets/config.personal-template" ~/.config.personal
+    # setup a place to drop local config like env and alias
+    # that will be sourced but not checked into this repo
+    # ~/.localrc
+    if [ ! -f "${HOME}/.localrc" ]; then
+        echo "# Store local configuration here. This is sourced by .zshrc" > "${HOME}/.localrc"
     fi
 }
 
