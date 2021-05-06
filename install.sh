@@ -66,7 +66,7 @@ cp -f "${__dir}/dotFiles/.nanorc" ~/.nanorc
 desired_prefs="${__dir}/assets/spectacle/Shortcuts.json"
 current_prefs="${HOME}/Library/Application Support/Spectacle/Shortcuts.json"
 
-if ! diff "${desired_prefs}" "${current_prefs}" >/dev/null 2&>1; then
+if ! diff "${desired_prefs}" "${current_prefs}" >/dev/null 2>&1; then
 	cp -f "${desired_prefs}" "${current_prefs}"
 fi
 
