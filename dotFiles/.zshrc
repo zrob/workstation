@@ -5,19 +5,22 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Path to your oh-my-zsh installation.
+#################
+# Setup Oh My Zsh
+#################
+
 export ZSH="${HOME}/.oh-my-zsh"
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 plugins=(
+  fzf
   git-prompt
   z
   zsh_reload
-  fzf
   zsh-autosuggestions
-  zsh-syntax-highlighting # must be last
 )
+plugins+=(zsh-syntax-highlighting) #ensure this plugin is listed last
 
 source $ZSH/oh-my-zsh.sh
 
