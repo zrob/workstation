@@ -88,11 +88,11 @@ setup_ruby() {
 }
 
 setup_dotfiles() {
-    cp -f "${__dir}/dotFiles/.gitconfig" ~/.gitconfig
-    cp -f "${__dir}/dotFiles/.zshrc" ~/.zshrc
-    cp -f "${__dir}/dotFiles/.p10k.zsh" ~/.p10k.zsh
-    cp -f "${__dir}/dotFiles/.nanorc" ~/.nanorc
-    cp -f "${__dir}/dotFiles/.gemrc" ~/.gemrc
+    cp -f "${__dir}/dotfiles/.gitconfig" ~/.gitconfig
+    cp -f "${__dir}/dotfiles/.zshrc" ~/.zshrc
+    cp -f "${__dir}/dotfiles/.p10k.zsh" ~/.p10k.zsh
+    cp -f "${__dir}/dotfiles/.nanorc" ~/.nanorc
+    cp -f "${__dir}/dotfiles/.gemrc" ~/.gemrc
 }
 
 setup_spectacle() {
