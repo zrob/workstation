@@ -66,6 +66,7 @@
     # laravel_version       # laravel php framework version (https://laravel.com/)
     # java_version          # java version (https://www.java.com/)
     # package               # name@version from package.json (https://docs.npmjs.com/files/package.json)
+    ruby_version
     rbenv                   # ruby version from rbenv (https://github.com/rbenv/rbenv)
     rvm                     # ruby version from rvm (https://rvm.io)
     fvm                     # flutter version management (https://github.com/leoafarias/fvm)
@@ -1535,6 +1536,29 @@
     # instant_prompt_example. This will give us the same `example` prompt segment in the instant
     # and regular prompts.
     prompt_example
+  }
+
+  function prompt_ruby_version() {
+    local version
+
+    if command -v chruby >/dev/null 2>&1 && [[ -f .ruby-version ]]; then
+
+      if command -v chruby_auto >/dev/null 2>&1; then
+        chruby_auto
+      fi
+
+      version=$(ruby --version | awk '{print $1, $2}') || return
+
+      if [[ -z $(chruby | grep '\*') ]]; then
+        version="${version} (system)"
+      fi
+
+      p10k segment -f 'red' -i 'RUBY_ICON' -r -t "$version"
+    fi
+  }
+
+  function instant_prompt_ruby_version() {
+    prompt_ruby_version
   }
 
   # User-defined prompt segments can be customized the same way as built-in segments.
