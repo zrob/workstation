@@ -132,7 +132,7 @@ Install Powerlevel10k fonts (may need to remove ~/.p10k.zsh to trigger font inst
 p10k configure
 
 Reload Terminal
-source ~/.zshrc"
+source ~/.zshrc
 EOF
 }
 
