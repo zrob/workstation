@@ -53,6 +53,8 @@ show_configs() {
 }
 
 main() {
+    cd "${__dir}/.."
+
     if [[ "$cd_behavior" = true ]]; then
         cd_helper
         exit 0
@@ -67,8 +69,6 @@ main() {
         show_configs
         exit 0
     fi
-
-    cd "${__dir}/.."
 
     WORKSTATION_FOCUS="$focus" WORKSTATION_SKIP="$skip" ./install.sh
 }
