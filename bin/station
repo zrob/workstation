@@ -58,16 +58,17 @@ main() {
 		exit 0
 	fi
 
+	if [[ $pull_behavior = true ]]; then
+		git pull
+		echo
+	fi
+
 	if [[ "$show_config_behavior" = true ]]; then
 		show_configs
 		exit 0
 	fi
 	
 	cd "${__dir}/.."
-
-	if [[ $pull_behavior = true ]]; then
-		git pull
-	fi
 
     WORKSTATION_FOCUS="$focus" WORKSTATION_SKIP="$skip" ./install.sh
 }
