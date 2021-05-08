@@ -16,6 +16,7 @@ brew "chruby"
 brew "ruby-install"
 brew "python", link: true, overwrite: true
 
+tap "homebrew/cask"
 cask "caffeine"
 cask "discord"
 cask "docker"
