@@ -34,82 +34,82 @@ EOF
 }
 
 cd_helper() {
-	echo -n "cd ${__parent_dir}" | pbcopy
-	
-	echo "cd ${__parent_dir}"
-	echo
-	echo "cmd+v. filled the command into your paste buffer."
+    echo -n "cd ${__parent_dir}" | pbcopy
+    
+    echo "cd ${__parent_dir}"
+    echo
+    echo "cmd+v. filled the command into your paste buffer."
 }
 
 show_configs() {
-	source "${__parent_dir}/lib/print_helper.sh"
-	# this is some hacky shit
-	# eval the setup_ordered_list value from install.sh
-	# this is the list of configs that can run that we want to display
-	# use sed to multi-line match
-	# start at variable name end at closing paren
-	eval "$(sed -n '/readonly setup_ordered_list/,/)/p' install.sh)"
-	print_setup_list "Available configurations" setup_ordered_list[@]
+    source "${__parent_dir}/lib/print_helper.sh"
+    # this is some hacky shit
+    # eval the setup_ordered_list value from install.sh
+    # this is the list of configs that can run that we want to display
+    # use sed to multi-line match
+    # start at variable name end at closing paren
+    eval "$(sed -n '/readonly setup_ordered_list/,/)/p' install.sh)"
+    print_setup_list "Available configurations" setup_ordered_list[@]
 }
 
 main() {
-	if [[ "$cd_behavior" = true ]]; then
-		cd_helper
-		exit 0
-	fi
+    if [[ "$cd_behavior" = true ]]; then
+        cd_helper
+        exit 0
+    fi
 
-	if [[ $pull_behavior = true ]]; then
-		git pull
-		echo
-	fi
+    if [[ $pull_behavior = true ]]; then
+        git pull
+        echo
+    fi
 
-	if [[ "$show_config_behavior" = true ]]; then
-		show_configs
-		exit 0
-	fi
-	
-	cd "${__dir}/.."
+    if [[ "$show_config_behavior" = true ]]; then
+        show_configs
+        exit 0
+    fi
+
+    cd "${__dir}/.."
 
     WORKSTATION_FOCUS="$focus" WORKSTATION_SKIP="$skip" ./install.sh
 }
 
 while getopts "hlcf:s:a" opt; do
 case "${opt}" in
-	"h")
-		print_usage
-		exit 0
-		;;
-	"l")
-		pull_behavior=false
-		;;
-	"c")
-		cd_behavior=true
-		;;
-	"a")
-		show_config_behavior=true
-		;;
-	"f")
-		focus="$OPTARG"
-		set +o nounset
-		until [[ $(eval "echo \${$OPTIND}") =~ ^-.* ]] || [ -z $(eval "echo \${$OPTIND}") ]; do
-			focus+=" $(eval "echo \${$OPTIND}")"
-			OPTIND=$((OPTIND + 1))
+    "h")
+        print_usage
+        exit 0
+        ;;
+    "l")
+        pull_behavior=false
+        ;;
+    "c")
+        cd_behavior=true
+        ;;
+    "a")
+        show_config_behavior=true
+        ;;
+    "f")
+        focus="$OPTARG"
+        set +o nounset
+        until [[ $(eval "echo \${$OPTIND}") =~ ^-.* ]] || [ -z $(eval "echo \${$OPTIND}") ]; do
+            focus+=" $(eval "echo \${$OPTIND}")"
+            OPTIND=$((OPTIND + 1))
         done
-		set -o nounset
-		;;
-	"s")
-		skip="$OPTARG"
-		set +o nounset
-		until [[ $(eval "echo \${$OPTIND}") =~ ^-.* ]] || [ -z $(eval "echo \${$OPTIND}") ]; do
-			skip+=" $(eval "echo \${$OPTIND}")"
-			OPTIND=$((OPTIND + 1))
+        set -o nounset
+        ;;
+    "s")
+        skip="$OPTARG"
+        set +o nounset
+        until [[ $(eval "echo \${$OPTIND}") =~ ^-.* ]] || [ -z $(eval "echo \${$OPTIND}") ]; do
+            skip+=" $(eval "echo \${$OPTIND}")"
+            OPTIND=$((OPTIND + 1))
         done
-		set -o nounset
-		;;
-	"?")
-		print_usage
-		exit 1
-		;;
+        set -o nounset
+        ;;
+    "?")
+        print_usage
+        exit 1
+        ;;
 esac
 done
 shift $((OPTIND - 1))
