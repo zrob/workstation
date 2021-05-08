@@ -7,13 +7,13 @@ set -o nounset
 
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __filename="$(basename "${BASH_SOURCE[0]}")"
-__parent_dir="$(cd "$(dirname "${__dir}")" && pwd)"
+__root_dir="$(cd "$(dirname "${__dir}")" && pwd)"
 
 pull_behavior=true
 cd_behavior=false
 show_config_behavior=false
-focus=""
-skip=""
+focus_list=""
+skip_list=""
 
 print_usage() {
 cat << EOF
@@ -34,15 +34,15 @@ EOF
 }
 
 cd_helper() {
-    echo -n "cd ${__parent_dir}" | pbcopy
+    echo -n "cd ${__root_dir}" | pbcopy
     
-    echo "cd ${__parent_dir}"
+    echo "cd ${__root_dir}"
     echo
     echo "cmd+v. filled the command into your paste buffer."
 }
 
 show_configs() {
-    source "${__parent_dir}/lib/print_helper.sh"
+    source "${__root_dir}/lib/print_helper.sh"
     # this is some hacky shit
     # eval the setup_ordered_list value from install.sh
     # this is the list of configs that can run that we want to display
@@ -52,25 +52,33 @@ show_configs() {
     print_setup_list "Available configurations" setup_ordered_list[@]
 }
 
+git_pull() {
+    git pull
+    echo
+}
+
 main() {
-    cd "${__dir}/.."
+    cd "$__root_dir"
 
     if [[ "$cd_behavior" = true ]]; then
         cd_helper
         exit 0
     fi
 
-    if [[ $pull_behavior = true ]]; then
-        git pull
-        echo
-    fi
-
     if [[ "$show_config_behavior" = true ]]; then
+        if [[ "$pull_behavior" = true ]]; then
+            git_pull || true
+        fi
+
         show_configs
         exit 0
     fi
 
-    WORKSTATION_FOCUS="$focus" WORKSTATION_SKIP="$skip" ./install.sh
+    if [[ "$pull_behavior" = true ]]; then
+        git_pull
+    fi
+
+    WORKSTATION_FOCUS="$focus_list" WORKSTATION_SKIP="$skip_list" ./install.sh
 }
 
 while getopts "hlcf:s:a" opt; do
@@ -89,19 +97,19 @@ case "${opt}" in
         show_config_behavior=true
         ;;
     "f")
-        focus="$OPTARG"
+        focus_list="$OPTARG"
         set +o nounset
         until [[ $(eval "echo \${$OPTIND}") =~ ^-.* ]] || [ -z $(eval "echo \${$OPTIND}") ]; do
-            focus+=" $(eval "echo \${$OPTIND}")"
+            focus_list+=" $(eval "echo \${$OPTIND}")"
             OPTIND=$((OPTIND + 1))
         done
         set -o nounset
         ;;
     "s")
-        skip="$OPTARG"
+        skip_list="$OPTARG"
         set +o nounset
         until [[ $(eval "echo \${$OPTIND}") =~ ^-.* ]] || [ -z $(eval "echo \${$OPTIND}") ]; do
-            skip+=" $(eval "echo \${$OPTIND}")"
+            skip_list+=" $(eval "echo \${$OPTIND}")"
             OPTIND=$((OPTIND + 1))
         done
         set -o nounset
