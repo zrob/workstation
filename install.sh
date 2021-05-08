@@ -5,9 +5,78 @@ set -o pipefail
 set -o nounset
 # set -o xtrace
 
+###
+# Configure this list to add new setups in necessary order
+###
+readonly setup_ordered_list=(
+    setup_brew
+    setup_oh_my_zsh
+    setup_golang
+    setup_ruby
+    setup_dotfiles
+    setup_spectacle
+    setup_personal_hooks
+)
+
+WORKSTATION_FOCUS="${WORKSTATION_FOCUS:-"NOFOCUS"}"
+WORKSTATION_SKIP="${WORKSTATION_SKIP:-"NOSKIP"}"
+
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-brew_bundle() {
+declare -a run_setups=()
+declare -a skip_setups=()
+
+source "${__dir}/lib/print_helper.sh"
+
+create_run_plan() {
+    local setup
+    local skip
+    local focus
+    local default_skip
+    local skipit
+
+    # turn skip list into array if it isn't already
+    if ! declare -p WORKSTATION_SKIP 2> /dev/null | grep -q '^declare \-a'; then
+        read -a WORKSTATION_SKIP <<< "$WORKSTATION_SKIP"
+    fi
+
+    # turn run list into array if it isn't already
+    if ! declare -p WORKSTATION_FOCUS 2> /dev/null | grep -q '^declare \-a'; then
+        read -a WORKSTATION_FOCUS <<< "$WORKSTATION_FOCUS"
+    fi
+
+    if [[ "$WORKSTATION_FOCUS" != "NOFOCUS" ]]; then
+        default_skip=true
+    else
+        default_skip=false
+    fi
+
+    for setup in "${setup_ordered_list[@]}"; do
+        skipit="$default_skip"
+
+        for skip in "${WORKSTATION_SKIP[@]}"; do
+            if [[ "$setup" == *"$skip"* ]]; then
+                skipit=true
+                break
+            fi
+        done
+
+        for focus in "${WORKSTATION_FOCUS[@]}"; do
+            if [[ "$setup" == *"$focus"* ]]; then
+                skipit=false
+                break
+            fi
+        done
+
+        if [[ "$skipit" = true ]]; then
+            skip_setups+=("$setup")
+        else
+            run_setups+=("$setup")
+        fi
+    done
+}
+
+setup_brew() {
     brew bundle install
 }
 
@@ -78,7 +147,7 @@ setup_ruby() {
     # chruby doesn't play nice with nounset
     set +o nounset
     source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
-    chruby $(cat "${HOME}/.ruby-version")
+    chruby "$(cat "${HOME}/.ruby-version")"
     chruby
     set -o nounset
 
@@ -137,13 +206,24 @@ EOF
 }
 
 main() {
-    brew_bundle
-    setup_oh_my_zsh
-    setup_golang
-    setup_ruby
-    setup_dotfiles
-    setup_spectacle
-    setup_personal_hooks
+    local setup
+
+    create_run_plan
+
+    print_setup_list "Available configurations:" setup_ordered_list[@]
+    echo
+    print_setup_list "Configurations being skipped:" skip_setups[@]
+    echo
+    print_setup_list "Configurations being run:" run_setups[@]
+    echo
+
+    if [[ "${#run_setups[@]}" -gt 0 ]]; then
+        # execute setups
+        for setup in "${run_setups[@]}"; do
+            "$setup"
+        done
+    fi
+
     print_outro
 }
 

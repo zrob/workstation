@@ -3,7 +3,7 @@
 set -o errexit
 set -o pipefail
 set -o nounset
-#set -o xtrace
+# set -o xtrace
 
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 __filename="$(basename "${BASH_SOURCE[0]}")"
@@ -11,6 +11,9 @@ __parent_dir="$(cd "$(dirname "${__dir}")" && pwd)"
 
 pull_behavior=true
 cd_behavior=false
+show_config_behavior=false
+focus=""
+skip=""
 
 print_usage() {
 cat << EOF
@@ -22,7 +25,10 @@ Usage: ${__filename} [options]
 
 Options:
   -l    Install local state without pulling first
-  -c    Provide helper to 'cd' to the workstation directory
+  -f    List of setups to focus
+  -s    List of setups to skip
+  -c    Display 'cd' to the workstation directory
+  -a    Display available setups
   -h    Display this help message
 EOF
 }
@@ -35,9 +41,25 @@ cd_helper() {
 	echo "cmd+v. filled the command into your paste buffer."
 }
 
+show_configs() {
+	source "${__parent_dir}/lib/print_helper.sh"
+	# this is some hacky shit
+	# eval the setup_ordered_list value from install.sh
+	# this is the list of configs that can run that we want to display
+	# use sed to multi-line match
+	# start at variable name end at closing paren
+	eval "$(sed -n '/readonly setup_ordered_list/,/)/p' install.sh)"
+	print_setup_list "Available configurations" setup_ordered_list[@]
+}
+
 main() {
-	if [[ $cd_behavior = true ]]; then
+	if [[ "$cd_behavior" = true ]]; then
 		cd_helper
+		exit 0
+	fi
+
+	if [[ "$show_config_behavior" = true ]]; then
+		show_configs
 		exit 0
 	fi
 	
@@ -47,10 +69,10 @@ main() {
 		git pull
 	fi
 
-    ./install.sh
+    WORKSTATION_FOCUS="$focus" WORKSTATION_SKIP="$skip" ./install.sh
 }
 
-while getopts "hlc" opt; do
+while getopts "hlcf:s:a" opt; do
 case "${opt}" in
 	"h")
 		print_usage
@@ -61,7 +83,28 @@ case "${opt}" in
 		;;
 	"c")
 		cd_behavior=true
-		;;		
+		;;
+	"a")
+		show_config_behavior=true
+		;;
+	"f")
+		focus="$OPTARG"
+		set +o nounset
+		until [[ $(eval "echo \${$OPTIND}") =~ ^-.* ]] || [ -z $(eval "echo \${$OPTIND}") ]; do
+			focus+=" $(eval "echo \${$OPTIND}")"
+			OPTIND=$((OPTIND + 1))
+        done
+		set -o nounset
+		;;
+	"s")
+		skip="$OPTARG"
+		set +o nounset
+		until [[ $(eval "echo \${$OPTIND}") =~ ^-.* ]] || [ -z $(eval "echo \${$OPTIND}") ]; do
+			skip+=" $(eval "echo \${$OPTIND}")"
+			OPTIND=$((OPTIND + 1))
+        done
+		set -o nounset
+		;;
 	"?")
 		print_usage
 		exit 1
