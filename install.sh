@@ -3,7 +3,7 @@
 set -o errexit
 set -o pipefail
 set -o nounset
-# set -o xtrace
+[[ "${TRACE:-}" ]] && set -o xtrace
 
 ###
 # Configure this list to add new setups in necessary order
