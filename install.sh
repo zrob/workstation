@@ -26,8 +26,6 @@ __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 declare -a run_setups=()
 declare -a skip_setups=()
 
-source "${__dir}/lib/print_helper.sh"
-
 create_run_plan() {
     local setup
     local skip
@@ -205,17 +203,42 @@ source ~/.zshrc
 EOF
 }
 
+print_setup_list() {
+    local header="$1"
+    local -a list=("${!2:-none}")
+    local indent="    "
+
+    echo "$header"
+
+    for item in "${list[@]}"; do
+        # display item with indent and remove 'setup_' prefix
+        echo "${indent}${item#"setup_"}";
+    done
+}
+
+print_available_setups() {
+    print_setup_list "Available configurations:" setup_ordered_list[@]
+    echo
+}
+
+print_skipped_setups() {
+    print_setup_list "Configurations being skipped:" skip_setups[@]
+    echo
+}
+
+print_run_setups() {
+    print_setup_list "Configurations being run:" run_setups[@]
+    echo
+}
+
 main() {
     local setup
 
     create_run_plan
 
-    print_setup_list "Available configurations:" setup_ordered_list[@]
-    echo
-    print_setup_list "Configurations being skipped:" skip_setups[@]
-    echo
-    print_setup_list "Configurations being run:" run_setups[@]
-    echo
+    print_available_setups
+    print_skipped_setups
+    print_run_setups
 
     if [[ "${#run_setups[@]}" -gt 0 ]]; then
         # execute setups
@@ -227,4 +250,5 @@ main() {
     print_outro
 }
 
-main
+# can include this script as a library
+[[ "$0" != "$BASH_SOURCE" ]] || main
