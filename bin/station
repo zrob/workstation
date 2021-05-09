@@ -122,4 +122,4 @@ esac
 done
 shift $((OPTIND - 1))
 
-main "$@"
+main
