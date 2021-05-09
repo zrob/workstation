@@ -36,10 +36,14 @@ export GOPATH="${HOME}/workspace/go"
 export PATH="${PATH}:${GOPATH}/bin"
 
 alias g=git
+alias ga="git a"
+alias gci="git ci"
+alias gd="git d"
+alias glg="git lg"
+alias gs="git s"
 
+alias k=kubectl
 if command -v kubectl >/dev/null; then
-  alias k=kubectl
-  # kubectl auto-complete and setup for k alias
   source <(kubectl completion zsh)
   complete -F __start_kubectl k
 fi

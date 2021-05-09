@@ -4,18 +4,26 @@
   email = zach.robinson@gmail.com
 
 [alias]
-  a = add -p
-  alias = "! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ / | grep -v ^alias"
-  amend = commit --amend --no-edit
-  ci = commit --verbose
-  co = checkout
+  a = "add -p"
+  aa = "add ."
+  ca = "commit -a --verbose"
+  ci = "commit --verbose"
+  amend = "commit --amend --no-edit"
+  rbi = "rebase -i"
+
+  d = "diff"
   ds = "diff --staged"
-  lg = log --graph --decorate --oneline
+
+  lg = "log --graph --decorate --oneline"
   lol = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)%an & %cn%Creset'"
   lod = "log --graph --abbrev-commit --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)%an & %cn%Creset'"
-  s = status --short --branch
-  st = status --short --branch
+
+  co = "checkout"
+  s = "status --short --branch"
+  st = "status --short --branch"
   unstage = "reset HEAD"
+
+  alias = "! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ / | grep -v ^alias | sort"
 
 [url "git@github.com:"]
   pushInsteadOf = https://github.com/
