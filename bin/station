@@ -19,7 +19,7 @@ print_usage() {
 cat << EOF
 ${__filename} -- workstation management
 
-Default is to pull latest changes and attempt install.
+Pull latest changes and install.
 
 Usage: ${__filename} [options]
 
