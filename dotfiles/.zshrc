@@ -22,7 +22,7 @@ plugins=(
 )
 plugins+=(zsh-syntax-highlighting) #ensure this plugin is listed last
 
-source $ZSH/oh-my-zsh.sh
+source "${ZSH}/oh-my-zsh.sh"
 
 ####################
 # User configuration
