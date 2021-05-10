@@ -119,6 +119,9 @@ main() {
         git_pull
     fi
 
+    [[ -n "${WORKSTATION_FOCUS:-}" ]] && focus_list+=" ${WORKSTATION_FOCUS}"
+    [[ -n "${WORKSTATION_SKIP:-}" ]] && skip_list+=" ${WORKSTATION_SKIP}"
+
     WORKSTATION_FOCUS="$focus_list" WORKSTATION_SKIP="$skip_list" ./install.sh
 }
 
