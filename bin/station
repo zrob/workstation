@@ -119,7 +119,9 @@ main() {
         git_pull
     fi
 
-    WORKSTATION_FOCUS="$focus_list" WORKSTATION_SKIP="$skip_list" ./install.sh
+    WORKSTATION_FOCUS="${WORKSTATION_FOCUS:-} ${focus_list}" \
+    WORKSTATION_SKIP="${WORKSTATION_SKIP:-} ${skip_list}" \
+        ./install.sh
 }
 
 main "$@"
