@@ -87,7 +87,7 @@ setup_oh_my_zsh() {
         "${ZSH}/tools/upgrade.sh"
     fi
 
-    local custom_dir=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}
+    local custom_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
     if [[ ! -d "${custom_dir}/themes/powerlevel10k" ]]; then
         git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
