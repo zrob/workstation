@@ -240,12 +240,10 @@ main() {
     print_skipped_setups
     print_run_setups
 
-    if [[ "${#run_setups[@]}" -gt 0 ]]; then
-        # execute setups
-        for setup in "${run_setups[@]}"; do
-            "$setup"
-        done
-    fi
+    # execute setups
+    for setup in "${run_setups[@]:-:}"; do
+        "$setup"
+    done
 
     print_outro
 }
