@@ -188,9 +188,9 @@ setup_personal_hooks() {
 print_outro() {
 cat << EOF
 
-+==================================+
-Great job! You win some extra setup!
-+==================================+
++======================================+
+| Great job! You win some extra setup! |
++======================================+
 
 Configure iTerm (Preferences > General > Preferences)
 ${__dir}/assets/iterm
