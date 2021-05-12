@@ -60,6 +60,12 @@ fi
 # Setup hooks for config and binaries on local machine
 [[ -f "${HOME}/.localrc" ]] && source "${HOME}/.localrc"
 [[ -d "${HOME}/bin" ]] && export PATH="${PATH}:${HOME}/bin"
+if [[ -d "${HOME}/.localsources" ]]; then
+  for file_to_source in $(find "${HOME}/.localsources" -name '*.zsh'); do
+    source "$file_to_source"
+  done
+fi
+unset file_to_source
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

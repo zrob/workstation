@@ -183,6 +183,11 @@ setup_personal_hooks() {
     if [[ ! -f "${HOME}/.localrc" ]]; then
         echo "# Store local configuration here. This is sourced by .zshrc" > "${HOME}/.localrc"
     fi
+
+    # setup a directory to drop local config .zsh files
+    # that will be sourced by .zshrc but not check in
+    # ~/.localsources
+    mkdir -p "${HOME}/.localsources"
 }
 
 print_outro() {
