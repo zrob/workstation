@@ -12,8 +12,13 @@ __root_dir="$(cd "$(dirname "${__dir}")" && pwd)"
 pull_behavior=true
 cd_behavior=false
 show_config_behavior=false
+profile_behavior=false
 focus_list=""
 skip_list=""
+profile_install_dir="${HOME}/.localsources/station_profiles"
+profile_args=()
+available_profiles=()
+installed_profiles=()
 
 print_usage() {
 cat << EOF
@@ -29,15 +34,23 @@ Options:
   -s    List of setups to skip
   -c    Display 'cd' to the workstation directory
   -a    Display available setups
+  -p    Manage profiles for focusing/skipping setups
+
+        Subcommands:
+        -p list                      Display available and installed profiles
+        -p install PROFILE_LIST      Install listed profiles to workstation
+        -p uninstall PROFILE_LIST    Uninstall listed profiles from workstation
+
   -h    Display this help message
 EOF
 }
 
 parse_options() {
     local OPTIND
+    local OPTARG
     local opt
 
-    while getopts "hlcf:s:a" opt; do
+    while getopts "hlcf:s:ap:" opt; do
     case "${opt}" in
         "h")
             print_usage
@@ -70,6 +83,16 @@ parse_options() {
             done
             set -o nounset
             ;;
+        "p")
+            profile_behavior=true
+            profile_args=("$OPTARG")
+            set +o nounset
+            until [[ $(eval "echo \${$OPTIND}") =~ ^-.* ]] || [[ -z $(eval "echo \${$OPTIND}") ]]; do
+                profile_args+=("$(eval "echo \${$OPTIND}")")
+                OPTIND=$((OPTIND + 1))
+            done
+            set -o nounset
+            ;;
         "?")
             print_usage
             exit 1
@@ -80,7 +103,7 @@ parse_options() {
 
 cd_helper() {
     echo -n "cd ${__root_dir}" | pbcopy
-    
+
     echo "cd ${__root_dir}"
     echo
     echo "cmd+v. filled the command into your paste buffer."
@@ -94,6 +117,130 @@ show_configs() {
 git_pull() {
     git pull
     echo
+}
+
+init_profiles() {
+    local profile
+
+    mkdir -p "${profile_install_dir}"
+
+    shopt -s nullglob
+
+    for profile in "${__root_dir}"/profiles/*.zsh; do
+        available_profiles+=("$(basename -s '.zsh' "${profile}")")
+    done
+
+    for profile in "${HOME}"/.localsources/station_profiles/*.zsh; do
+        installed_profiles+=("$(basename -s '.zsh' "${profile}")")
+    done
+
+    shopt -u nullglob
+}
+
+print_available_profiles() {
+    local indent="    "
+    local profile
+
+    echo "Available profiles:"
+    for profile in "${available_profiles[@]:-(none)}"; do
+        echo "${indent}${profile}"
+    done
+}
+
+print_installed_profiles() {
+    local indent="    "
+    local profile
+
+    echo "Installed profiles:"
+    for profile in "${installed_profiles[@]:-(none)}"; do
+        echo "${indent}${profile}"
+    done
+}
+
+install_profile() {
+    local profile="$1"
+    cp -f "${__root_dir}/profiles/${profile}.zsh" "${profile_install_dir}/${profile}.zsh"
+}
+
+uninstall_profile() {
+    local profile="$1"
+    rm "${profile_install_dir}/${profile}.zsh"
+}
+
+profile_subcommand() {
+    local subcommand="${profile_args[0]}"
+    local arg
+    local to_install
+    local unmatched
+    local match
+    local profile
+
+    case "$subcommand" in
+        "list")
+            print_available_profiles
+            echo
+            print_installed_profiles
+            return 0
+            ;;
+        "install")
+            if [[ ! "${#profile_args[@]}" -gt 1 ]]; then
+                echo "'-p install' requires a list of profiles to install"
+                print_usage
+                return 1
+            fi
+
+            to_install=()
+            unmatched=()
+
+            for arg in "${profile_args[@]:1}"; do
+                match=false
+
+                for profile in "${available_profiles[@]}"; do
+                    if [[ "$profile" == "$arg" ]]; then
+                        match=true
+                        break
+                    fi
+                done
+
+                if [[ "$match" == true ]]; then
+                    to_install+=("$arg")
+                else
+                    unmatched+=("$arg")
+                fi
+            done
+
+            if [[ "${#unmatched[@]}" -gt 0 ]]; then
+                echo "Aborting...nonexistent profiles: ${unmatched[*]}"
+                return 1
+            fi
+
+            echo "Installing profiles: ${to_install[*]}"
+            for profile in "${to_install[@]}"; do
+                install_profile "$profile"
+            done
+            ;;
+        "uninstall")
+            if [[ ! "${#profile_args[@]}" -gt 1 ]]; then
+                echo "'-p uninstall' requires a list of profiles to uninstall"
+                print_usage
+                return 1
+            fi
+
+            echo "Uninstalling profiles: ""${profile_args[@]:1}"
+
+            for arg in "${profile_args[@]:1}"; do
+                for profile in "${installed_profiles[@]:-}"; do
+                    if [[ "$profile" == "$arg" ]]; then
+                        uninstall_profile "$profile"
+                    fi
+                done
+            done
+            ;;
+        *)
+            echo "invalid option ${profile_args[*]}"
+            return 1
+            ;;
+    esac
 }
 
 main() {
@@ -117,6 +264,12 @@ main() {
 
     if [[ "$pull_behavior" = true ]]; then
         git_pull
+    fi
+
+    if [[ "$profile_behavior" = true ]]; then
+        init_profiles
+        profile_subcommand
+        exit $?
     fi
 
     [[ -n "${WORKSTATION_FOCUS:-}" ]] && focus_list+=" ${WORKSTATION_FOCUS}"
