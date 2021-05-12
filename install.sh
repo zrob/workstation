@@ -9,6 +9,7 @@ set -o nounset
 # Configure this list to add new setups in necessary order
 ###
 readonly setup_ordered_list=(
+    setup_profiles
     setup_brew
     setup_oh_my_zsh
     setup_golang
@@ -23,8 +24,11 @@ WORKSTATION_SKIP="${WORKSTATION_SKIP:-"NOSKIP"}"
 
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-declare -a run_setups=()
-declare -a skip_setups=()
+run_setups=()
+skip_setups=()
+available_profiles=()
+installed_profiles=()
+profile_install_dir="${HOME}/.localsources/station_profiles"
 
 create_run_plan() {
     local setup
@@ -71,6 +75,75 @@ create_run_plan() {
         else
             run_setups+=("$setup")
         fi
+    done
+}
+
+init_profiles() {
+    local profile
+
+    mkdir -p "${profile_install_dir}"
+
+    shopt -s nullglob
+
+    for profile in "${__dir}"/profiles/*.zsh; do
+        available_profiles+=("$(basename -s '.zsh' "${profile}")")
+    done
+
+    for profile in "${HOME}"/.localsources/station_profiles/*.zsh; do
+        installed_profiles+=("$(basename -s '.zsh' "${profile}")")
+    done
+
+    shopt -u nullglob
+}
+
+install_profile() {
+    local profile="$1"
+    cp -f "${__dir}/profiles/${profile}.zsh" "${profile_install_dir}/${profile}.zsh"
+}
+
+source_profile() {
+    local profile="$1"
+    source "${profile_install_dir}/${profile}.zsh"
+}
+
+setup_profiles() {
+    [[ "${#installed_profiles[@]}" -eq  0 ]] && return
+
+    local profile
+    local installed_profile
+    local available_profile
+    local match
+    local to_install=()
+    local unmatched=()
+
+    for installed_profile in "${installed_profiles[@]}"; do
+        match=false
+
+        for available_profile in "${available_profiles[@]}"; do
+            if [[ "$installed_profile" == "$available_profile" ]]; then
+                match=true
+                break
+            fi
+        done
+
+        if [[ "$match" == true ]]; then
+            to_install+=("$installed_profile")
+        else
+            unmatched+=("$installed_profile")
+        fi
+    done
+
+    echo "Refreshing profiles: ${to_install[*]:-(none)}"
+    if [[ "${#unmatched[@]}" -gt 0 ]]; then
+        echo "Defunct profiles: ${unmatched[*]}"
+    fi
+
+    [[ "${#to_install[@]}" -eq  0 ]] && return
+
+    for profile in "${to_install[@]:-}"; do
+        install_profile "$profile"
+        # source profile now so that it can take affect for current installe
+        source_profile "$profile"
     done
 }
 
@@ -239,6 +312,7 @@ print_run_setups() {
 main() {
     local setup
 
+    init_profiles
     create_run_plan
 
     print_available_setups
