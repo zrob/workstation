@@ -283,7 +283,7 @@ EOF
 
 print_setup_list() {
     local header="$1"
-    local -a list=("${!2:-none}")
+    local -a list=("${!2:-(none)}")
     local indent="    "
 
     echo "$header"
