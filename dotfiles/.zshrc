@@ -28,6 +28,8 @@ source "${ZSH}/oh-my-zsh.sh"
 # User configuration
 ####################
 
+is(){command -v "$1" >/dev/null}
+
 export PATH="${PATH}:${HOME}/.workstation/bin"
 
 export EDITOR=nano
@@ -43,21 +45,21 @@ alias glg="git lg"
 alias gs="git s"
 
 alias k=kubectl
-if command -v kubectl >/dev/null; then
+if is kubectl; then
   source <(kubectl completion zsh)
   complete -F __start_kubectl k
 fi
 
-if command -v thefuck >/dev/null; then
+if is thefuck; then
   source <(thefuck --alias)
 fi
 
-if command -v brew >/dev/null && [[ -d "$(brew --prefix)/opt/chruby" ]]; then
+if is brew && [[ -d "$(brew --prefix)/opt/chruby" ]]; then
   source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
   source "$(brew --prefix)/opt/chruby/share/chruby/auto.sh"
 fi
 
-if command -v direnv >/dev/null; then
+if is direnv; then
   source <(direnv hook zsh)
 fi
 
@@ -70,6 +72,8 @@ if [[ -d "${HOME}/.localsources" ]]; then
   done
 fi
 unset file_to_source
+
+unset -f is
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
