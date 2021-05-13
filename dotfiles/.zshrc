@@ -49,12 +49,16 @@ if command -v kubectl >/dev/null; then
 fi
 
 if command -v thefuck >/dev/null; then
-  eval $(thefuck --alias)
+  source <(thefuck --alias)
 fi
 
 if command -v brew >/dev/null && [[ -d "$(brew --prefix)/opt/chruby" ]]; then
   source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
   source "$(brew --prefix)/opt/chruby/share/chruby/auto.sh"
+fi
+
+if command -v direnv >/dev/null; then
+  source <(direnv hook zsh)
 fi
 
 # Setup hooks for config and binaries on local machine
