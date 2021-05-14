@@ -155,9 +155,7 @@ setup_oh_my_zsh() {
     if [[ ! -d "${HOME}/.oh-my-zsh" ]]; then
         sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended"
     else
-        # this assumes oh my zsh is running well and setting $ZSH
-        # if things are broke, then may need to manually tinker
-        "${ZSH}/tools/upgrade.sh"
+        "${HOME}/.oh-my-zsh/tools/upgrade.sh"
     fi
 
     local custom_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
