@@ -9,7 +9,6 @@ set -o nounset
 # Configure this list to add new setups in necessary order
 ###
 readonly setup_ordered_list=(
-    setup_profiles
     setup_brew
     setup_oh_my_zsh
     setup_golang
@@ -106,7 +105,7 @@ source_profile() {
     source "${profile_install_dir}/${profile}.zsh"
 }
 
-setup_profiles() {
+refresh_installed_profiles() {
     [[ "${#installed_profiles[@]}" -eq  0 ]] && return
 
     local profile
@@ -311,6 +310,8 @@ main() {
     local setup
 
     init_profiles
+    refresh_installed_profiles
+
     create_run_plan
 
     print_available_setups
