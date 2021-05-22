@@ -100,11 +100,6 @@ install_profile() {
     cp -f "${__dir}/profiles/${profile}.zsh" "${profile_install_dir}/${profile}.zsh"
 }
 
-source_profile() {
-    local profile="$1"
-    source "${profile_install_dir}/${profile}.zsh"
-}
-
 refresh_installed_profiles() {
     [[ "${#installed_profiles[@]}" -eq  0 ]] && return
 
@@ -141,8 +136,13 @@ refresh_installed_profiles() {
 
     for profile in "${to_install[@]:-}"; do
         install_profile "$profile"
-        # source profile now so that it can take affect for current installe
-        source_profile "$profile"
+    done
+}
+
+source_profiles() {
+    local profile
+    for profile in "${installed_profiles[@]}"; do
+        source "${profile_install_dir}/${profile}.zsh"
     done
 }
 
@@ -311,6 +311,7 @@ main() {
 
     init_profiles
     refresh_installed_profiles
+    source_profiles
 
     create_run_plan
 
