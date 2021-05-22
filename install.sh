@@ -140,6 +140,7 @@ refresh_installed_profiles() {
 }
 
 source_profiles() {
+    [[ "${#installed_profiles[@]}" -eq 0 ]] && return
     local profile
     for profile in "${installed_profiles[@]}"; do
         source "${profile_install_dir}/${profile}.zsh"
