@@ -1,1 +1,1 @@
-export WORKSTATION_SKIP="spectacle ${WORKSTATION_SKIP:-}"
+export WORKSTATION_SKIP="${WORKSTATION_SKIP:-} spectacle"
