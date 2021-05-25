@@ -59,6 +59,9 @@ fi
 if is brew && [[ -d "$(brew --prefix)/opt/chruby" ]]; then
   source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
   source "$(brew --prefix)/opt/chruby/share/chruby/auto.sh"
+elif [[ -r "/usr/local/share/chruby/chruby.sh" ]]; then
+  source /usr/local/share/chruby/chruby.sh
+  source /usr/local/share/chruby/auto.sh
 fi
 
 if is direnv; then
@@ -74,6 +77,13 @@ if [[ -d "${HOME}/.localsources" ]]; then
   done
 fi
 unset file_to_source
+
+# Setup location of diff-highlight for .gitconfig
+if is brew; then
+  export __WORKSTATION_DIFF_HIGHLIGHT_PREFIX="$(brew --prefix git)"
+else
+  export __WORKSTATION_DIFF_HIGHLIGHT_PREFIX="/usr"
+fi
 
 unset -f is
 

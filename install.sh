@@ -215,7 +215,11 @@ setup_ruby() {
 
     # chruby doesn't play nice with nounset
     set +o nounset
-    source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
+    if command -v brew >/dev/null; then
+        source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
+    else
+        source /usr/local/share/chruby/chruby.sh
+    fi
     chruby "$(cat "${HOME}/.ruby-version")"
     chruby
     set -o nounset
