@@ -16,6 +16,7 @@ sudo apt-get update && sudo apt-get install -y \
     watch \
     wget \
     zsh-syntax-highlighting \
+    python3 \
     && sudo rm -rf /var/lib/apt/lists/*
 
 # No apt analogs, just skipping

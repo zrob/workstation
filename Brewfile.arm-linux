@@ -1,4 +1,0 @@
-brew "go"
-brew "chruby"
-brew "ruby-install"
-brew "python", link: true, overwrite: true
