@@ -84,6 +84,7 @@
     gcloud                  # google cloud cli account and project (https://cloud.google.com/)
     google_app_cred         # google application credentials (https://cloud.google.com/docs/authentication/production)
     context                 # user@hostname
+    container_context
     nordvpn                 # nordvpn connection status, linux only (https://nordvpn.com/)
     ranger                  # ranger shell (https://github.com/ranger/ranger)
     nnn                     # nnn shell (https://github.com/jarun/nnn)
@@ -1536,6 +1537,16 @@
     # instant_prompt_example. This will give us the same `example` prompt segment in the instant
     # and regular prompts.
     prompt_example
+  }
+
+  function prompt_container_context() {
+    if [[ -n "$__WORKSTATION_IN_CONTAINER" ]]; then
+      p10k segment -i '🐋'
+    fi
+  }
+
+  function instant_prompt_container_context() {
+    prompt_container_context
   }
 
   function prompt_ruby_version() {

@@ -32,11 +32,13 @@ source "${ZSH}/oh-my-zsh.sh"
 is(){command -v "$1" >/dev/null}
 
 export PATH="${PATH}:${HOME}/.workstation/bin"
-
 export EDITOR=nano
+export TERM=xterm-256color
 
 export GOPATH="${HOME}/workspace/go"
 export PATH="${PATH}:${GOPATH}/bin"
+
+in-container && export __WORKSTATION_IN_CONTAINER=true
 
 alias g=git
 alias ga="git a"

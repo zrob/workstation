@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+cat /proc/1/cgroup 2>/dev/null | grep -q docker
