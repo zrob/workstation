@@ -1541,7 +1541,7 @@
 
   function prompt_container_context() {
     if [[ -n "$__WORKSTATION_IN_CONTAINER" ]]; then
-      p10k segment -i '🐋'
+      p10k segment -f steelblue -i "🐋 ${(%):-%m}"
     fi
   }
 
