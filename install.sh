@@ -10,6 +10,7 @@ set -o nounset
 ###
 readonly setup_ordered_list=(
     setup_brew
+    setup_apt
     setup_oh_my_zsh
     setup_golang
     setup_ruby
@@ -148,7 +149,24 @@ source_profiles() {
 }
 
 setup_brew() {
-    brew bundle install
+    if command -v brew >/dev/null; then
+        brew bundle install
+    else
+        echo "Skipping brew...not installed"
+    fi
+}
+
+setup_apt() {
+    # apt is a special case. only use if brew isn't available.
+    if command -v brew >/dev/null; then
+        echo "Skipping apt...brew is available"
+        return
+    fi
+    if ! command -v apt-get >/dev/null; then
+        echo "Skipping apt...apt-get not available"
+        return
+    fi
+    "${__dir}"/aptfile.sh
 }
 
 setup_oh_my_zsh() {
