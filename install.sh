@@ -27,7 +27,7 @@ run_setups=()
 skip_setups=()
 available_profiles=()
 installed_profiles=()
-profile_install_dir="${HOME}/.localsources/station_profiles"
+profile_install_dir="${HOME}/.localrc.d/station_profiles"
 
 create_run_plan() {
     local setup
@@ -88,7 +88,7 @@ init_profiles() {
         available_profiles+=("$(basename -s '.zsh' "${profile}")")
     done
 
-    for profile in "${HOME}"/.localsources/station_profiles/*.zsh; do
+    for profile in "${profile_install_dir}"/*.zsh; do
         installed_profiles+=("$(basename -s '.zsh' "${profile}")")
     done
 
@@ -261,8 +261,8 @@ setup_personal_hooks() {
 
     # setup a directory to drop local config .zsh files
     # that will be sourced by .zshrc but not check in
-    # ~/.localsources
-    mkdir -p "${HOME}/.localsources"
+    # ~/.localrc.d
+    mkdir -p "${HOME}/.localrc.d"
 }
 
 print_outro() {

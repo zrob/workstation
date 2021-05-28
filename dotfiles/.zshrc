@@ -72,13 +72,13 @@ fi
 
 # Setup hooks for config and binaries on local machine
 [[ -f "${HOME}/.localrc" ]] && source "${HOME}/.localrc"
-[[ -d "${HOME}/bin" ]] && export PATH="${PATH}:${HOME}/bin"
-if [[ -d "${HOME}/.localsources" ]]; then
-  for file_to_source in $(find "${HOME}/.localsources" -name '*.zsh'); do
+if [[ -d "${HOME}/.localrc.d" ]]; then
+  for file_to_source in $(find "${HOME}/.localrc.d" -name '*.zsh'); do
     source "$file_to_source"
   done
+  unset file_to_source
 fi
-unset file_to_source
+[[ -d "${HOME}/bin" ]] && export PATH="${PATH}:${HOME}/bin"
 
 # Setup location of diff-highlight for .gitconfig
 if is brew; then
