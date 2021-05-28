@@ -168,6 +168,9 @@ setup_oh_my_zsh() {
             git pull
         popd
     fi
+    # gitstatusd is usually installed first time login happens after p10k install
+    # instead force the issue, b/c it's annoying inside containers and requires network access
+    "${custom_dir}"/themes/powerlevel10k/gitstatus/install
 
     if [[ ! -d "${custom_dir}/plugins/zsh-syntax-highlighting" ]]; then
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
