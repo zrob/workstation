@@ -30,6 +30,7 @@ source "${ZSH}/oh-my-zsh.sh"
 ####################
 
 is(){command -v "$1" >/dev/null}
+in-container(){cat /proc/1/cgroup 2>/dev/null | grep -q docker}
 
 export PATH="${PATH}:${HOME}/.workstation/bin"
 export EDITOR=nano
@@ -88,6 +89,7 @@ else
 fi
 
 unset -f is
+unset -f in-container
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
