@@ -183,7 +183,26 @@ setup_oh_my_zsh() {
             "${custom_dir}/themes/powerlevel10k"
     else
         pushd "${custom_dir}/themes/powerlevel10k"
+            local initial_rev new_rev
+            initial_rev=$(git rev-parse HEAD)
             git pull
+            new_rev=$(git rev-parse HEAD)
+            if [[ "$initial_rev" != "$new_rev" ]]; then
+                local commit_url
+                commit_url=$(git remote get-url origin)
+
+cat <<EOF
+
++============================================+
+| Powerlevel10k updates                      |
++============================================+
+
+Commits: ${commit_url%.git}/commits/master
+
+EOF
+                git --no-pager log --abbrev-commit --pretty=oneline "$initial_rev"..."$new_rev"
+                echo
+            fi
         popd
     fi
     # gitstatusd is usually installed first time login happens after p10k install
