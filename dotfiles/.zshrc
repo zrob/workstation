@@ -59,6 +59,10 @@ if is thefuck; then
   source <(thefuck --alias)
 fi
 
+if is direnv; then
+  source <(direnv hook zsh)
+fi
+
 if is brew && [[ -d "$(brew --prefix)/opt/chruby" ]]; then
   source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
   source "$(brew --prefix)/opt/chruby/share/chruby/auto.sh"
@@ -67,18 +71,12 @@ elif [[ -r "/usr/local/share/chruby/chruby.sh" ]]; then
   source /usr/local/share/chruby/auto.sh
 fi
 
-if is direnv; then
-  source <(direnv hook zsh)
-fi
-
 # Setup hooks for config and binaries on local machine
-[[ -f "${HOME}/.localrc" ]] && source "${HOME}/.localrc"
-if [[ -d "${HOME}/.localrc.d" ]]; then
-  for file_to_source in $(find "${HOME}/.localrc.d" -name '*.zsh'); do
-    source "$file_to_source"
-  done
-  unset file_to_source
-fi
+[[ -r "${HOME}/.localrc" ]] && source "${HOME}/.localrc"
+[[ -d "${HOME}/.localrc.d" ]] && {
+  for f in "${HOME}"/.localrc.d/**/*.zsh; do source "$f"; done
+  unset f
+}
 [[ -d "${HOME}/bin" ]] && export PATH="${PATH}:${HOME}/bin"
 
 # Setup location of diff-highlight for .gitconfig
