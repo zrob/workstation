@@ -109,7 +109,22 @@ cd_helper() {
 }
 
 git_pull() {
+    local initial_rev new_rev
+
+    initial_rev=$(git rev-parse HEAD)
     git pull
+    new_rev=$(git rev-parse HEAD)
+
+    if [[ "$initial_rev" != "$new_rev" ]]; then
+cat <<EOF
+
++============================================+
+| Station updates                            |
++============================================+
+
+EOF
+git --no-pager log --abbrev-commit --pretty=oneline "$initial_rev"..."$new_rev"
+    fi
     echo
 }
 
