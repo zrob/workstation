@@ -18,7 +18,6 @@ plugins=(
   fzf
   git-prompt
   z
-  zsh_reload
   zsh-autosuggestions
 )
 plugins+=(zsh-syntax-highlighting) #ensure this plugin is listed last
