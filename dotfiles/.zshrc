@@ -31,6 +31,9 @@ source "${ZSH}/oh-my-zsh.sh"
 is(){command -v "$1" >/dev/null}
 in-container(){cat /proc/1/cgroup 2>/dev/null | grep -q docker}
 
+export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+export ZSH_HIGHLIGHT_STYLES[bracket-error]='bg=red'
+
 export PATH="${PATH}:${HOME}/.workstation/bin"
 export EDITOR=nano
 export TERM=xterm-256color
