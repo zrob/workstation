@@ -41,6 +41,8 @@ export TERM=xterm-256color
 export GOPATH="${HOME}/workspace/go"
 export PATH="${PATH}:${GOPATH}/bin"
 
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
 in-container && export __WORKSTATION_IN_CONTAINER=true
 
 alias g=git

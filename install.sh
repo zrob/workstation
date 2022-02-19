@@ -17,6 +17,7 @@ readonly setup_ordered_list=(
     setup_dotfiles
     setup_spectacle
     setup_personal_hooks
+    setup_krew
 )
 
 WORKSTATION_FOCUS="${WORKSTATION_FOCUS:-"NOFOCUS"}"
@@ -303,6 +304,14 @@ setup_personal_hooks() {
     # that will be sourced by .zshrc but not check in
     # ~/.localrc.d
     mkdir -p "${HOME}/.localrc.d"
+}
+
+setup_krew() {
+    "${__dir}/install-krew.sh"
+    kubectl krew update
+    kubectl krew install tree
+    kubectl krew install lineage
+    kubectl krew upgrade
 }
 
 print_outro() {
