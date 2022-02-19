@@ -29,7 +29,14 @@ source "${ZSH}/oh-my-zsh.sh"
 ####################
 
 is(){command -v "$1" >/dev/null}
-in-container(){cat /proc/1/cgroup 2>/dev/null | grep -q docker}
+in-container() {
+  # cgroup v1
+  ( cat /proc/1/cgroup 2>/dev/null | grep -q docker ) ||
+  # cgroup v2
+  # will always have cgroup.events, but only containers have /sys/fs/cgroup/cgroup.type so look for both to exist
+  # this isn't really true on older kernels or could change on future, but is good enough
+  ( [[ -r /sys/fs/cgroup/cgroup.events ]] && [[ -r /sys/fs/cgroup/cgroup.type ]] )
+}
 
 export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
 export ZSH_HIGHLIGHT_STYLES[bracket-error]='bg=red'
