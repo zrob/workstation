@@ -1,8 +1,10 @@
+brew "coreutils"
 brew "direnv"
 brew "fzf"
 brew "git"
 brew "jq"
 brew "kind"
+brew "ko"
 brew "kubectl"
 brew "mdcat"
 brew "ncdu"
@@ -18,6 +20,12 @@ brew "go"
 brew "chruby"
 brew "ruby-install"
 brew "python", link: true, overwrite: true
+
+tap "vmware-tanzu/carvel"
+brew "kapp"
+brew "ytt"
+brew "kbld"
+brew "imgpkg"
 
 tap "homebrew/cask"
 cask "caffeine"
