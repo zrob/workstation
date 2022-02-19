@@ -322,7 +322,10 @@ setup_krew() {
 
     ./"${krew}" install krew
     ./"${krew}" update
+    # tree doesn't have an arm distro and i want my dev container build to work so just be lazy and ignore the error
+    set +o errexit
     ./"${krew}" install tree
+    set -o errexit
     ./"${krew}" install lineage
     ./"${krew}" upgrade
 }
