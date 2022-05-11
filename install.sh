@@ -9,6 +9,7 @@ set -o nounset
 # Configure this list to add new setups in necessary order
 ###
 readonly setup_ordered_list=(
+    setup_dns
     setup_brew
     setup_apt
     setup_oh_my_zsh
@@ -330,6 +331,13 @@ setup_krew() {
     ./"${krew}" upgrade
 }
 
+setup_dns() {
+    if ! profiles list | grep -q com.zach.cloudflare.doh; then
+        open "${__dir}/assets/osx-dns-profile/cloudflare-doh.mobileconfig"
+    fi
+    networksetup -setdnsservers Wi-Fi 1.1.1.1 1.0.0.1 2606:4700:4700::1111 2606:4700:4700::1001
+}
+
 print_outro() {
 cat << EOF
 
@@ -342,6 +350,9 @@ ${__dir}/assets/iterm
 
 Install Powerlevel10k fonts (may need to remove ~/.p10k.zsh to trigger font install)
 p10k configure
+
+Install DNS over HTTPS profile
+open /System/Library/PreferencePanes/Profiles.prefPane
 
 Reload Terminal
 exec zsh

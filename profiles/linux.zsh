@@ -1,1 +1,1 @@
-export WORKSTATION_SKIP="${WORKSTATION_SKIP:-} spectacle"
+export WORKSTATION_SKIP="${WORKSTATION_SKIP:-} spectacle dns"
