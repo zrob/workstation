@@ -14,6 +14,7 @@ brew "thefuck"
 brew "tree"
 brew "watch"
 brew "wget"
+brew "zsh"
 brew "zsh-syntax-highlighting"
 
 brew "go"
