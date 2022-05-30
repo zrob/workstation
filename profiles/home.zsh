@@ -1,0 +1,1 @@
+export WORKSTATION_DNS="192.168.4.67"
