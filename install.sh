@@ -19,6 +19,7 @@ readonly setup_ordered_list=(
     setup_spectacle
     setup_personal_hooks
     setup_krew
+    setup_touchid_sudo
 )
 
 WORKSTATION_FOCUS="${WORKSTATION_FOCUS:-"NOFOCUS"}"
@@ -343,6 +344,14 @@ setup_dns() {
     fi
 
     networksetup -setdnsservers Wi-Fi $(echo "${WORKSTATION_DNS:-} ${quad9}" | xargs)
+}
+
+setup_touchid_sudo() {
+    if [[ -f "/etc/pam.d/sudo" ]] && ! grep -q "pam_tid.so" /etc/pam.d/sudo; then
+        cat /etc/pam.d/sudo | \
+            sed 's/auth       sufficient     pam_smartcard.so/& \nauth sufficient pam_tid.so/' | \
+            sudo tee /etc/pam.d/sudo >/dev/null
+    fi
 }
 
 print_outro() {
