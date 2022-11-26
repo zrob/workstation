@@ -338,14 +338,12 @@ setup_dns() {
     #     open "${__dir}/assets/osx-dns-profile/cloudflare-doh.mobileconfig"
     # fi
 
-    # local quad9="9.9.9.9 149.112.112.112 2620:fe::fe 2620:fe::9"
+    local quad9="9.9.9.9 149.112.112.112 2620:fe::fe 2620:fe::9"
     if ! profiles list | grep -q com.zach.quad9.doh; then
         open "${__dir}/assets/osx-dns-profile/quad9-doh.mobileconfig"
     fi
 
-    # networksetup -setdnsservers Wi-Fi $(echo "${WORKSTATION_DNS:-} ${quad9}" | xargs)
-
-    networksetup -setdnsservers Wi-Fi $(echo "${WORKSTATION_DNS:-}" | xargs)
+    networksetup -setdnsservers Wi-Fi $(echo "${WORKSTATION_DNS:-} ${quad9}" | xargs)
 }
 
 setup_touchid_sudo() {
