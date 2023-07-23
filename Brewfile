@@ -34,7 +34,6 @@ brew "ytt"
 brew "kbld"
 brew "imgpkg"
 
-tap "homebrew/cask"
 cask "caffeine"
 cask "discord"
 cask "docker"
