@@ -5,8 +5,12 @@
 
 # add keys for kubernetes repos
 # used for packages: kubectl
-readonly kubernetes_latest=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+
+# get latest and strip patch
+readonly kubernetes_latest=$(curl -L -s https://dl.k8s.io/release/stable.txt | cut -d '.' -f 1,2 )
+# version does not matter here, same key used for all versions
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+# version does matter here. different packages per minor
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/${kubernetes_latest}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update && sudo apt-get install -y \
