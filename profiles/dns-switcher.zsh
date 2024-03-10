@@ -1,0 +1,1 @@
+export WORKSTATION_SKIP="${WORKSTATION_SKIP:-} dns"
