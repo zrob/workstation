@@ -343,7 +343,12 @@ setup_dns() {
         open "${__dir}/assets/osx-dns-profile/quad9-doh.mobileconfig"
     fi
 
-    networksetup -setdnsservers Wi-Fi $(echo "${WORKSTATION_DNS:-} ${quad9}" | xargs)
+    local setdns="$quad9"
+    if [[ -n "${WORKSTATION_DNS:-}" ]]; then
+        setdns="$WORKSTATION_DNS"
+    fi
+
+    networksetup -setdnsservers Wi-Fi $(echo "${setdns}" | xargs)
 }
 
 setup_touchid_sudo() {
