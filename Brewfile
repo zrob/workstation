@@ -28,7 +28,7 @@ brew "chruby"
 brew "ruby-install"
 brew "python", link: true, overwrite: true
 
-tap "vmware-tanzu/carvel"
+tap "carvel-dev/carvel"
 brew "kapp"
 brew "ytt"
 brew "kbld"
