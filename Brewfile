@@ -34,7 +34,6 @@ brew "ytt"
 brew "kbld"
 brew "imgpkg"
 
-cask "caffeine"
 cask "discord"
 cask "docker"
 cask "dropbox"
