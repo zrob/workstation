@@ -16,7 +16,7 @@ readonly setup_ordered_list=(
     setup_golang
     setup_ruby
     setup_dotfiles
-    setup_spectacle
+    setup_rectangle
     setup_personal_hooks
     setup_krew
     setup_touchid_sudo
@@ -280,9 +280,10 @@ setup_dotfiles() {
     cp -f "${__dir}/dotfiles/.gemrc" ~/.gemrc
 }
 
-setup_spectacle() {
-    local desired_prefs="${__dir}/assets/spectacle/Shortcuts.json"
-    local current_prefs="${HOME}/Library/Application Support/Spectacle/Shortcuts.json"
+setup_rectangle() {
+    local filename="com.knollsoft.Rectangle.plist"
+    local desired_prefs="${__dir}/assets/rectangle/${filename}"
+    local current_prefs="${HOME}/Library/Preferences/${filename}"
 
     if ! diff "${desired_prefs}" "${current_prefs}" >/dev/null 2>&1; then
         cp -f "${desired_prefs}" "${current_prefs}"
