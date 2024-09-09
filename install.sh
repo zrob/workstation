@@ -281,13 +281,13 @@ setup_dotfiles() {
 }
 
 setup_rectangle() {
-    local filename="com.knollsoft.Rectangle.plist"
-    local desired_prefs="${__dir}/assets/rectangle/${filename}"
-    local current_prefs="${HOME}/Library/Preferences/${filename}"
+    local filename="RectangleConfig.json"
+    local source_prefs="${__dir}/assets/rectangle/${filename}"
+    local dest_prefs_folder="${HOME}/Library/Application Support/Rectangle"
 
-    if ! diff "${desired_prefs}" "${current_prefs}" >/dev/null 2>&1; then
-        cp -f "${desired_prefs}" "${current_prefs}"
-    fi
+    mkdir -p "${dest_prefs_folder}"
+    rm -fr "${dest_prefs_folder}"/*
+    cp "${source_prefs}"  "${dest_prefs_folder}/${filename}" >/dev/null 2>&1
 }
 
 setup_personal_hooks() {
