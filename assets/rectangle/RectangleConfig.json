@@ -101,7 +101,7 @@
       "int" : 0
     },
     "landscapeSnapAreas" : {
-      "string" : "null"
+      "string" : "[1,{\"action\":15},6,{\"action\":13},8,{\"action\":14},3,{\"action\":16},4,{\"compound\":-2},7,{\"compound\":-4},5,{\"compound\":-3}]"
     },
     "launchOnLogin" : {
       "bool" : true
@@ -253,12 +253,20 @@
       "keyCode" : 8,
       "modifierFlags" : 786432
     },
+    "larger" : {
+      "keyCode" : 24,
+      "modifierFlags" : 1835008
+    },
     "leftHalf" : {
       "keyCode" : 123,
       "modifierFlags" : 1835008
     },
     "maximize" : {
       "keyCode" : 36,
+      "modifierFlags" : 1835008
+    },
+    "maximizeHeight" : {
+      "keyCode" : 82,
       "modifierFlags" : 1835008
     },
     "reflowTodo" : {
@@ -271,6 +279,10 @@
     },
     "rightHalf" : {
       "keyCode" : 124,
+      "modifierFlags" : 1835008
+    },
+    "smaller" : {
+      "keyCode" : 27,
       "modifierFlags" : 1835008
     },
     "toggleTodo" : {
