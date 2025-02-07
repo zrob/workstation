@@ -257,19 +257,19 @@ setup_ruby() {
     # fi
 
     # chruby doesn't play nice with nounset
-    set +o nounset
-    if command -v brew >/dev/null; then
-        source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
-    else
-        source /usr/local/share/chruby/chruby.sh
-    fi
-    chruby "$(cat "${HOME}/.ruby-version")"
-    chruby
-    set -o nounset
+    # set +o nounset
+    # if command -v brew >/dev/null; then
+    #     source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
+    # else
+    #     source /usr/local/share/chruby/chruby.sh
+    # fi
+    # chruby "$(cat "${HOME}/.ruby-version")"
+    # chruby
+    # set -o nounset
 
-    gem install bundler --no-document
+    # gem install bundler --no-document
 
-    tail -n 1 "$logfile"
+    # tail -n 1 "$logfile"
 }
 
 setup_dotfiles() {
