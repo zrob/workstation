@@ -29,6 +29,9 @@
   pushInsteadOf = https://github.com/
   pushInsteadOf = git://github.com/
 
+[push]
+  autoSetupRemote = true
+
 [pull]
 	rebase = true
 
@@ -46,3 +49,18 @@
 
 [pager]
   branch = false
+
+[column]
+  ui = auto
+
+[branch]
+  sort = -committerdate
+
+[tag]
+  sort = version:refname
+
+[diff]
+  algorithm = histogram
+  colorMoved = plain
+  mnemonicPrefix = true
+  renames = true
