@@ -1,0 +1,147 @@
+{
+  "default": [
+    {
+      "expression": "*.amazon.com",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "LocalStorage",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "id": "hONaVD04Z"
+    },
+    {
+      "expression": "*.dashnet.org",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "id": "38sAaCw7-6"
+    },
+    {
+      "expression": "*.google.com",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [
+        "ServiceWorkers",
+        "PluginData",
+        "LocalStorage",
+        "IndexedDB",
+        "Cache"
+      ],
+      "cookieNames": [],
+      "id": "hPczGBRdES"
+    },
+    {
+      "expression": "*.myfantasyleague.com",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "id": "rlV_eybS70"
+    },
+    {
+      "expression": "*.orteil.dashnet.org",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "id": "KjQD8Oc4y"
+    },
+    {
+      "expression": "*.united.com",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "LocalStorage",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "id": "N9_iCEgAUy"
+    },
+    {
+      "expression": "espn.com",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [
+        "ServiceWorkers",
+        "PluginData",
+        "LocalStorage",
+        "IndexedDB",
+        "Cache"
+      ],
+      "cookieNames": [],
+      "id": "wGBdDaMEZr"
+    },
+    {
+      "expression": "github.com",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "LocalStorage",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "id": "n-Sqr1DNft"
+    },
+    {
+      "expression": "orteil.dashnet.org",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "id": "WrxmxyEj2"
+    },
+    {
+      "expression": "secure.web.plus.espn.com",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "LocalStorage",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "id": "zIJdxciOkm"
+    },
+    {
+      "expression": "twitch.tv",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "id": "m9bC3lqmYv"
+    },
+    {
+      "expression": "united.com",
+      "listType": "WHITE",
+      "storeId": "default",
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "LocalStorage",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "id": "uGwcVi5WKC"
+    }
+  ]
+}
