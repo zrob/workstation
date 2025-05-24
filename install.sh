@@ -18,9 +18,13 @@ readonly setup_ordered_list=(
     setup_dotfiles
     setup_rectangle
     setup_personal_hooks
-    setup_krew
     setup_touchid_sudo
 )
+
+###
+# Paused setups
+###
+# setup_krew
 
 WORKSTATION_FOCUS="${WORKSTATION_FOCUS:-"NOFOCUS"}"
 WORKSTATION_SKIP="${WORKSTATION_SKIP:-"NOSKIP"}"
