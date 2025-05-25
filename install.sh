@@ -9,21 +9,21 @@ set -o nounset
 # Configure this list to add new setups in necessary order
 ###
 readonly setup_ordered_list=(
-    setup_dns
+    setup_dotfiles
+    setup_personal_hooks
+    setup_touchid_sudo
     setup_brew
     setup_apt
     setup_oh_my_zsh
     setup_golang
     setup_ruby
-    setup_dotfiles
     setup_rectangle
-    setup_personal_hooks
-    setup_touchid_sudo
 )
 
 ###
 # Paused setups
 ###
+# setup_dns
 # setup_krew
 
 WORKSTATION_FOCUS="${WORKSTATION_FOCUS:-"NOFOCUS"}"
