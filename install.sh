@@ -20,11 +20,10 @@ readonly setup_ordered_list=(
     setup_rectangle
 )
 
-###
-# Paused setups
-###
-# setup_dns
-# setup_krew
+readonly manual_only_setups=(
+    setup_dns
+    setup_krew
+)
 
 WORKSTATION_FOCUS="${WORKSTATION_FOCUS:-"NOFOCUS"}"
 WORKSTATION_SKIP="${WORKSTATION_SKIP:-"NOSKIP"}"
@@ -74,6 +73,23 @@ create_run_plan() {
                 break
             fi
         done
+
+        for focus in "${WORKSTATION_FOCUS[@]}"; do
+            if [[ "$setup" == *"$focus"* ]]; then
+                skipit=false
+                break
+            fi
+        done
+
+        if [[ "$skipit" = true ]]; then
+            skip_setups+=("$setup")
+        else
+            run_setups+=("$setup")
+        fi
+    done
+
+    for setup in "${manual_only_setups[@]}"; do
+        skipit=true
 
         for focus in "${WORKSTATION_FOCUS[@]}"; do
             if [[ "$setup" == *"$focus"* ]]; then
@@ -195,7 +211,8 @@ print_setup_list() {
 }
 
 print_available_setups() {
-    print_setup_list "Available configurations:" setup_ordered_list[@]
+    local merged=("${setup_ordered_list[@]}" "${manual_only_setups[@]}")
+    print_setup_list "Available configurations:" merged[@]
     echo
 }
 
