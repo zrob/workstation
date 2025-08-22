@@ -35,7 +35,7 @@ brew "kbld"
 brew "imgpkg"
 
 cask "discord"
-cask "docker"
+cask "docker-desktop"
 cask "dropbox"
 cask "flycut"
 cask "firefox"
