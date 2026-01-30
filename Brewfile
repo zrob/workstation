@@ -32,7 +32,6 @@ tap "carvel-dev/carvel"
 brew "kapp"
 brew "ytt"
 brew "kbld"
-brew "imgpkg"
 
 cask "discord"
 cask "docker-desktop"
