@@ -14,6 +14,7 @@ export ZSH="${HOME}/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 plugins=(
+  chruby
   direnv
   docker
   fzf
@@ -69,14 +70,6 @@ fi
 alias f=fuck
 if is thefuck; then
   source <(thefuck --alias)
-fi
-
-if is brew && [[ -d "$(brew --prefix)/opt/chruby" ]]; then
-  source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
-  source "$(brew --prefix)/opt/chruby/share/chruby/auto.sh"
-elif [[ -r "/usr/local/share/chruby/chruby.sh" ]]; then
-  source /usr/local/share/chruby/chruby.sh
-  source /usr/local/share/chruby/auto.sh
 fi
 
 # Setup hooks for config and binaries on local machine
