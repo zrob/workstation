@@ -19,6 +19,7 @@ plugins=(
   docker
   fzf
   git-prompt
+  nvm
   z
   zsh-autosuggestions
 )

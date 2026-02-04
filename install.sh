@@ -18,6 +18,7 @@ readonly setup_ordered_list=(
     setup_golang
     setup_ruby
     setup_rectangle
+    setup_node
 )
 
 readonly manual_only_setups=(
