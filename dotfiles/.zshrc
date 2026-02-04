@@ -14,6 +14,7 @@ export ZSH="${HOME}/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 plugins=(
+  direnv
   docker
   fzf
   git-prompt
@@ -68,10 +69,6 @@ fi
 alias f=fuck
 if is thefuck; then
   source <(thefuck --alias)
-fi
-
-if is direnv; then
-  source <(direnv hook zsh)
 fi
 
 if is brew && [[ -d "$(brew --prefix)/opt/chruby" ]]; then
