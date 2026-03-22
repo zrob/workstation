@@ -9,7 +9,6 @@ set -o nounset
 # Configure this list to add new setups in necessary order
 ###
 readonly setup_ordered_list=(
-    setup_dotfiles
     setup_personal_hooks
     setup_touchid_sudo
     setup_brew
@@ -17,8 +16,9 @@ readonly setup_ordered_list=(
     setup_oh_my_zsh
     setup_golang
     setup_ruby
-    setup_rectangle
     setup_node
+    setup_rectangle
+    setup_dotfiles
 )
 
 readonly manual_only_setups=(
