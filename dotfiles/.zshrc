@@ -53,6 +53,9 @@ export PATH="${PATH}:${GOPATH}/bin"
 
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
+export HOMEBREW_NO_ASK=1
+export HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS=1
+
 in-container && export __WORKSTATION_IN_CONTAINER=true
 
 alias g=git
