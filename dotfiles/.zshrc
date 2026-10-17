@@ -71,6 +71,8 @@ if is kubectl; then
   complete -F __start_kubectl k
 fi
 
+alias chat='mkdir -p "${HOME}/tmp/chat" && cd "${HOME}/tmp/chat" && claude'
+
 alias f=fuck
 if is thefuck; then
   source <(thefuck --alias)
