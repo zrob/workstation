@@ -41,6 +41,8 @@
 	<string>Cloudflare DNS over HTTPS</string>
 	<key>PayloadIdentifier</key>
 	<string>com.zach.cloudflare.doh</string>
+	<key>PayloadScope</key>
+	<string>System</string>
 	<key>PayloadRemovalDisallowed</key>
 	<false/>
 	<key>PayloadType</key>

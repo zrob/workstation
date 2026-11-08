@@ -19,6 +19,7 @@ readonly setup_ordered_list=(
     setup_node
     setup_rectangle
     setup_dotfiles
+    setup_doh_policy
 )
 
 readonly manual_only_setups=(

@@ -1,1 +1,1 @@
-export WORKSTATION_SKIP="${WORKSTATION_SKIP:-} spectacle dns"
+export WORKSTATION_SKIP="${WORKSTATION_SKIP:-} spectacle dns doh_policy"
