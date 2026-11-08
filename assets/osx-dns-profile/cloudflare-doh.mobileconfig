@@ -19,6 +19,23 @@
 				<key>ServerURL</key>
 				<string>https://cloudflare-dns.com/dns-query</string>
 			</dict>
+			<key>OnDemandRules</key>
+			<array>
+				<dict>
+					<key>Action</key>
+					<string>Disconnect</string>
+					<key>InterfaceTypeMatch</key>
+					<string>WiFi</string>
+					<key>SSIDMatch</key>
+					<array>
+						<string>z</string>
+					</array>
+				</dict>
+				<dict>
+					<key>Action</key>
+					<string>Connect</string>
+				</dict>
+			</array>
 			<key>PayloadDescription</key>
 			<string>Configures device to use Cloudflare Encrypted DNS over HTTPS</string>
 			<key>PayloadDisplayName</key>
