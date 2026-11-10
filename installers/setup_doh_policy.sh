@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
 # system-scoped profiles don't show in `profiles list` without root, but their
-# payload identifiers are recorded in the world-readable network extension prefs
+# payload identifiers are recorded in the world-readable network extension prefs.
+# grep reads a here-string rather than a pipe: grep -q exits on first match,
+# which SIGPIPEs plutil and fails the check under pipefail
 doh_profile_installed() {
-    plutil -p /Library/Preferences/com.apple.networkextension.plist 2>/dev/null | grep -q "\"$1\""
+    grep -q "\"$1\"" <<< "$(plutil -p /Library/Preferences/com.apple.networkextension.plist 2>/dev/null)"
 }
 
 setup_doh_policy() {
