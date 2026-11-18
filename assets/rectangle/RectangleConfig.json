@@ -269,6 +269,14 @@
       "keyCode" : 82,
       "modifierFlags" : 1835008
     },
+    "nextDisplay" : {
+      "keyCode" : 90,
+      "modifierFlags" : 1966080
+    },
+    "previousDisplay" : {
+      "keyCode" : 80,
+      "modifierFlags" : 1966080
+    },
     "reflowTodo" : {
       "keyCode" : 45,
       "modifierFlags" : 786432
