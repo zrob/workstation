@@ -2,7 +2,7 @@
 
 setup_oh_my_zsh() {
     if [[ ! -d "${HOME}/.oh-my-zsh" ]]; then
-        sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended"
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
     else
         "${HOME}/.oh-my-zsh/tools/upgrade.sh"
     fi
