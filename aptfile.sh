@@ -8,6 +8,8 @@
 
 # get latest and strip patch
 readonly kubernetes_latest=$(curl -L -s https://dl.k8s.io/release/stable.txt | cut -d '.' -f 1,2 )
+# keyrings dir only exists by default on debian 12+/ubuntu 22.04+
+sudo mkdir -p -m 0755 /etc/apt/keyrings
 # version does not matter here, same key used for all versions
 curl -fsSL "https://pkgs.k8s.io/core:/stable:/${kubernetes_latest}/deb/Release.key" | sudo gpg --yes --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 # version does matter here. different packages per minor
