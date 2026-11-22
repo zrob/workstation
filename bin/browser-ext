@@ -292,8 +292,80 @@ export_live() {
 view_diff() {
     local stored="$1" a="$2" a_label="$3" b="$4" b_label="$5"
 
+    if [[ "$stored" == tampermonkey.txt ]]; then
+        tampermonkey_diff "$@"
+        return
+    fi
+
     diff -u --label "${stored} (${a_label})" --label "${stored} (${b_label})" \
         <(file_view "$stored" "$a") <(file_view "$stored" "$b")
+}
+
+# tampermonkey exports hold every script in one file, so summarise which
+# scripts were added, removed or changed, then diff each changed one on its own.
+# scripts are matched by name, so a rename shows as one gone and one new
+tampermonkey_diff() {
+    local stored="$1" a="$2" a_label="$3" b="$4" b_label="$5"
+    local tmp av bv name line
+
+    tmp=$(mktemp -d)
+    av="${tmp}/a.json"
+    bv="${tmp}/b.json"
+    file_view "$stored" "$a" >"$av"
+    file_view "$stored" "$b" >"$bv"
+
+    if cmp -s "$av" "$bv"; then
+        rm -rf "$tmp"
+        return 0
+    fi
+
+    # summary lines: "+ name", "- name", "~ name (parts)", "settings"
+    jq -rn --slurpfile a "$av" --slurpfile b "$bv" '
+        def by_name: .scripts | map({key: .name, value: .}) | from_entries;
+        def version: [.source // [] | .[] | capture("^//\\s*@version\\s+(?<v>\\S+)")?.v][0];
+        ($a[0] | by_name) as $old | ($b[0] | by_name) as $new
+        | ((($new | keys) - ($old | keys))[] | "+ \(.)"),
+          ((($old | keys) - ($new | keys))[] | "- \(.)"),
+          ((($old | keys) - (($old | keys) - ($new | keys)))[] as $n
+            | $old[$n] as $o | $new[$n] as $w
+            | select($o != $w)
+            | [($o + $w | keys)[] | select($o[.] != $w[.])
+                | if . == "source" and ($o | version) != ($w | version)
+                  then "source \($o | version // "?") → \($w | version // "?")"
+                  elif . == "enabled" then (if $w.enabled then "enabled" else "disabled" end)
+                  else . end] as $parts
+            | "~ \($n) (\($parts | join(", ")))"),
+          (if ($a[0] | del(.scripts)) != ($b[0] | del(.scripts)) then "settings" else empty end)
+    ' >"${tmp}/summary"
+
+    local added removed changed
+    added=$(grep -c '^+ ' "${tmp}/summary" || true)
+    removed=$(grep -c '^- ' "${tmp}/summary" || true)
+    changed=$(grep -c '^~ ' "${tmp}/summary" || true)
+    echo "${stored} (${a_label} → ${b_label}): ${added} new, ${removed} gone, ${changed} changed"
+    sed -e 's/^+ /  new:     /' -e 's/^- /  gone:    /' -e 's/^~ /  changed: /' \
+        -e 's/^settings$/  changed: Tampermonkey settings/' "${tmp}/summary"
+
+    while IFS= read -r line; do
+        case "$line" in
+            settings)
+                echo
+                diff -u --label "settings (${a_label})" --label "settings (${b_label})" \
+                    <(jq 'del(.scripts)' "$av") <(jq 'del(.scripts)' "$bv") || true
+                ;;
+            "~ "*)
+                name="${line#\~ }"
+                name="${name% (*}"
+                echo
+                diff -u --label "${name} (${a_label})" --label "${name} (${b_label})" \
+                    <(jq --arg n "$name" '.scripts[] | select(.name == $n)' "$av") \
+                    <(jq --arg n "$name" '.scripts[] | select(.name == $n)' "$bv") || true
+                ;;
+        esac
+    done <"${tmp}/summary"
+
+    rm -rf "$tmp"
+    return 1
 }
 
 ###
