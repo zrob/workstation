@@ -18,14 +18,30 @@ plugins=(
   direnv
   docker
   fzf
-  git-prompt
   nvm
   z
   zsh-autosuggestions
 )
 plugins+=(zsh-syntax-highlighting) #ensure this plugin is listed last
 
+# load nvm on first use of nvm/node/npm/npx/etc. add other npm global commands to lazy-cmd
+zstyle ':omz:plugins:nvm' lazy yes
+
 source "${ZSH}/oh-my-zsh.sh"
+
+# put nvm's default node on PATH without loading nvm, so the prompt (and node scripts) see it.
+# nvm itself still loads lazily on first use of nvm/node/npm/npx
+() {
+  local dir=${NVM_DIR:-$HOME/.nvm} v
+  [[ -r $dir/alias/default ]] && v=$(<$dir/alias/default)
+  case $v in
+    (node|stable) v=( $dir/versions/node/v<->.<->.<->(N/nOn[1]:t) ) ;;  # newest stable, like nvm
+    (v<->.<->.<->) ;;
+    (<->.<->.<->) v=v$v ;;
+    (*) v= ;;  # partial versions, lts/*, etc: leave to nvm
+  esac
+  [[ -n $v && -x $dir/versions/node/$v/bin/node ]] && path=($dir/versions/node/$v/bin $path)
+}
 
 ####################
 # User configuration
@@ -56,7 +72,7 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export HOMEBREW_NO_ASK=1
 export HOMEBREW_NO_UPGRADE_AUTO_UPDATES_CASKS=1
 
-in-container && export __WORKSTATION_IN_CONTAINER=true
+[[ "$OSTYPE" == linux* ]] && in-container && export __WORKSTATION_IN_CONTAINER=true
 
 alias g=git
 alias ga="git a"
