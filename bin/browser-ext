@@ -14,6 +14,8 @@ readonly downloads_dir="${BROWSER_EXT_DOWNLOADS:-${HOME}/Downloads}"
 readonly firefox_support="${HOME}/Library/Application Support/Firefox"
 readonly wait_timeout="${BROWSER_EXT_TIMEOUT:-180}"
 readonly all_extensions="ublock cad tampermonkey"
+# when each extension's backup was last confirmed current (read by station)
+readonly state_dir="${XDG_STATE_HOME:-${HOME}/.local/state}/browser-ext"
 
 print_usage() {
     cat <<EOF
@@ -321,9 +323,16 @@ cmd_backup() {
         rm -f "$f"
     done
 
+    mark_verified "$ext"
+
     if [[ "$changed" == 1 ]]; then
         echo "  review: git -C ${__root_dir} diff -- assets/browser-extension-config"
     fi
+}
+
+mark_verified() {
+    mkdir -p "$state_dir"
+    date +%s >"${state_dir}/$1"
 }
 
 cmd_diff() {
@@ -347,6 +356,7 @@ cmd_diff() {
         rm -f "$f"
     done
 
+    [[ "$status" == 0 ]] && mark_verified "$ext"
     return "$status"
 }
 

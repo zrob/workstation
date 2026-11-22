@@ -21,6 +21,7 @@ readonly setup_ordered_list=(
     setup_macos_defaults
     setup_dotfiles
     setup_doh_policy
+    setup_browser_ext_check
 )
 
 readonly manual_only_setups=(
