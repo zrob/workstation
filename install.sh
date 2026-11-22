@@ -18,6 +18,7 @@ readonly setup_ordered_list=(
     setup_ruby
     setup_node
     setup_rectangle
+    setup_macos_defaults
     setup_dotfiles
     setup_doh_policy
 )

@@ -1,0 +1,68 @@
+# macOS defaults applied by installers/setup_macos_defaults.sh
+#
+# One setting per line, whitespace separated:
+#   domain  key  type  value  [currentHost]
+#
+# type is one of: bool int float string dict-add
+#   - type must match how macOS stores the key (check with `defaults read-type DOMAIN KEY`)
+#   - string values may use $HOME
+#   - dict-add replaces one entry of a dictionary key, leaving the rest alone.
+#     key is PARENT:ENTRY and value is the entry as compact JSON (no spaces),
+#     as printed by: defaults export DOMAIN - | plutil -extract PARENT.ENTRY json -o - -
+# add currentHost as a fifth column for keys stored with `defaults -currentHost`
+
+# --- keyboard
+NSGlobalDomain                                      KeyRepeat                                 float     2
+NSGlobalDomain                                      InitialKeyRepeat                          float     15
+# input sources: disable ctrl+space (previous) and ctrl+opt+space (next)
+com.apple.symbolichotkeys                           AppleSymbolicHotKeys:60                   dict-add  {"enabled":false,"value":{"type":"standard","parameters":[32,49,262144]}}
+com.apple.symbolichotkeys                           AppleSymbolicHotKeys:61                   dict-add  {"enabled":false,"value":{"type":"standard","parameters":[32,49,786432]}}
+
+# --- trackpad and mouse
+# natural scrolling off
+NSGlobalDomain                                      com.apple.swipescrolldirection            bool      false
+NSGlobalDomain                                      com.apple.trackpad.forceClick             bool      false
+NSGlobalDomain                                      com.apple.mouse.scaling                   float     2
+# tap to click
+com.apple.AppleMultitouchTrackpad                   Clicking                                  bool      true
+com.apple.driver.AppleBluetoothMultitouch.trackpad  Clicking                                  bool      true
+NSGlobalDomain                                      com.apple.mouse.tapBehavior               int       1         currentHost
+# smart zoom off
+com.apple.AppleMultitouchTrackpad                   TrackpadTwoFingerDoubleTapGesture         int       0
+com.apple.driver.AppleBluetoothMultitouch.trackpad  TrackpadTwoFingerDoubleTapGesture         int       0
+
+# --- dock
+com.apple.dock                                      autohide                                  bool      true
+com.apple.dock                                      autohide-delay                            float     0
+com.apple.dock                                      autohide-time-modifier                    float     0.3
+com.apple.dock                                      show-recents                              bool      false
+com.apple.dock                                      tilesize                                  float     64
+# bottom-right hot corner: none
+com.apple.dock                                      wvous-br-corner                           int       1
+com.apple.dock                                      wvous-br-modifier                         int       0
+
+# --- finder
+com.apple.finder                                    ShowPathbar                               bool      true
+com.apple.finder                                    ShowStatusBar                             bool      true
+com.apple.finder                                    FXPreferredViewStyle                      string    Nlsv
+com.apple.finder                                    ShowExternalHardDrivesOnDesktop           bool      true
+com.apple.finder                                    ShowRemovableMediaOnDesktop               bool      true
+# new windows open home
+com.apple.finder                                    NewWindowTarget                           string    PfHm
+com.apple.finder                                    NewWindowTargetPath                       string    file://$HOME/
+# open/save dialogs in list view
+NSGlobalDomain                                      NavPanelFileListModeForOpenMode           int       2
+
+# --- files
+com.apple.desktopservices                           DSDontWriteNetworkStores                  bool      true
+com.apple.desktopservices                           DSDontWriteUSBStores                      bool      true
+
+# --- windows and appearance
+com.apple.WindowManager                             EnableTiledWindowMargins                  bool      false
+NSGlobalDomain                                      AppleMiniaturizeOnDoubleClick             bool      false
+NSGlobalDomain                                      AppleInterfaceStyleSwitchesAutomatically  bool      true
+
+# --- menu bar
+com.apple.menuextra.clock                           ShowDayOfWeek                             bool      true
+com.apple.menuextra.clock                           ShowAMPM                                  bool      true
+com.apple.Siri                                      StatusMenuVisible                         bool      false
