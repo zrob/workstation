@@ -1,1 +1,1 @@
-export WORKSTATION_SKIP="${WORKSTATION_SKIP:-} rectangle dns doh_policy"
+export WORKSTATION_SKIP="${WORKSTATION_SKIP:-} touchid_sudo rectangle macos_defaults dns doh_policy browser_ext_check"
