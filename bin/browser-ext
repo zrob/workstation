@@ -1,0 +1,418 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+[[ "${TRACE:-}" ]] && set -o xtrace
+
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__filename="$(basename "${BASH_SOURCE[0]}")"
+__root_dir="$(cd "$(dirname "${__dir}")" && pwd)"
+
+readonly backup_dir="${__root_dir}/assets/browser-extension-config/firefox"
+readonly downloads_dir="${BROWSER_EXT_DOWNLOADS:-${HOME}/Downloads}"
+readonly firefox_support="${HOME}/Library/Application Support/Firefox"
+readonly wait_timeout="${BROWSER_EXT_TIMEOUT:-180}"
+readonly all_extensions="ublock cad tampermonkey"
+
+print_usage() {
+    cat <<EOF
+${__filename} -- back up, restore and diff Firefox extension settings
+
+Usage: ${__filename} COMMAND EXTENSION
+
+Commands:
+  backup     Export live settings and save them to the repo (only if changed)
+  diff       Export live settings and diff them against the repo backup
+  restore    Import the repo backup into the extension
+
+Extensions:
+  ublock        uBlock Origin
+  cad           Cookie AutoDelete (core settings + expressions)
+  tampermonkey  Tampermonkey (scripts, settings, script storage)
+  all           Everything above
+
+Exports and imports go through each extension's own buttons, so each
+command opens the settings page and tells you what to click. Downloaded
+exports are picked up from ${downloads_dir} and removed afterwards.
+
+Backups: ${backup_dir}
+EOF
+}
+
+###
+# Per-extension configuration
+###
+
+ext_name() {
+    case "$1" in
+        ublock) echo "uBlock Origin" ;;
+        cad) echo "Cookie AutoDelete" ;;
+        tampermonkey) echo "Tampermonkey" ;;
+    esac
+}
+
+ext_id() {
+    case "$1" in
+        ublock) echo "uBlock0@raymondhill.net" ;;
+        cad) echo "CookieAutoDelete@kennydo.com" ;;
+        tampermonkey) echo "firefox@tampermonkey.net" ;;
+    esac
+}
+
+ext_page() {
+    case "$1" in
+        ublock) echo "dashboard.html#settings.html" ;;
+        cad) echo "settings/settings.html" ;;
+        tampermonkey) echo "options.html#nav=utils" ;;
+    esac
+}
+
+# backup files for an extension, as "stored-name:download-glob"
+ext_files() {
+    case "$1" in
+        ublock) echo "ublock.json:my-ublock-backup_*.txt" ;;
+        cad) echo "cad-settings.json:CAD_CoreSettings_*.json cad-expressions.json:CAD_Expressions_*.json" ;;
+        tampermonkey) echo "tampermonkey.txt:tampermonkey-backup-*.txt" ;;
+    esac
+}
+
+ext_backup_steps() {
+    case "$1" in
+        ublock)
+            echo "  Settings tab → \"Back up to file…\""
+            ;;
+        cad)
+            echo "  Settings → \"Export Core Settings...\""
+            echo "  Expressions → \"Export Expressions...\""
+            echo "  (either order)"
+            ;;
+        tampermonkey)
+            echo "  Utilities tab → File → \"Export\""
+            echo "  (for a complete backup, first tick \"Include Tampermonkey settings\" and"
+            echo "  \"Include script storage\" on the Utilities tab)"
+            ;;
+    esac
+}
+
+file_import_step() {
+    case "$1" in
+        ublock.json) echo "Settings tab → \"Restore from file…\", then OK to overwrite (uBlock restarts)" ;;
+        cad-settings.json) echo "Settings → \"Import Core Settings...\"" ;;
+        cad-expressions.json) echo "Expressions → \"Import Expressions...\"" ;;
+        tampermonkey.txt) echo "Utilities tab → File → \"Import from file\", then confirm the scripts on the import page" ;;
+    esac
+}
+
+# sanity check that a file looks like the right export
+file_validate() {
+    local stored="$1" path="$2"
+    case "$stored" in
+        ublock.json) jq -e 'type == "object" and has("userSettings") and has("selectedFilterLists")' "$path" >/dev/null ;;
+        cad-settings.json) jq -e '.settings | type == "array"' "$path" >/dev/null ;;
+        cad-expressions.json) jq -e 'type == "object" and ([.[] | type == "array"] | all)' "$path" >/dev/null ;;
+        tampermonkey.txt) jq -e '.created_by == "Tampermonkey" and (.scripts | type == "array")' "$path" >/dev/null ;;
+    esac
+}
+
+# comparison view: drops fields that change on every export and puts
+# order-insensitive data in a stable order, so diffs show real changes only
+file_view() {
+    local stored="$1" path="$2"
+    case "$stored" in
+        ublock.json)
+            jq -S '
+                # rule fields are newline-joined strings in older versions, arrays in newer ones
+                def lines: (if type == "array" then . elif type == "string" then split("\n") else [] end) | map(select(length > 0));
+                del(.timeStamp, .version)
+                | .whitelist |= (lines | sort)
+                | .selectedFilterLists |= ((. // []) | sort)
+                | .userFilters |= lines
+                | .dynamicFilteringString |= (lines | sort)
+                | .urlFilteringString |= (lines | sort)
+                | .hostnameSwitchesString |= (lines | sort)
+            ' "$path"
+            ;;
+        cad-settings.json)
+            jq -S '.settings | map({key: .name, value: .value}) | from_entries' "$path"
+            ;;
+        cad-expressions.json)
+            jq -S '
+                def sorted: if type == "array" then sort else . end;
+                with_entries(.value |= (
+                    map(del(.id) | .cleanSiteData |= sorted | .cookieNames |= sorted)
+                    | sort_by(.expression, .listType, .storeId)
+                ))
+            ' "$path"
+            ;;
+        tampermonkey.txt)
+            # script source is base64 in the export; decode it so diffs show code.
+            # position is dropped because installing one script renumbers the rest,
+            # and storage.ts because it changes whenever a script saves anything
+            file_store "$stored" "$path" | jq -S '
+                def decoded: if type == "string" then (@base64d | split("\n")) else . end;
+                del(.scripts) + {scripts: (.scripts | map(del(.position, .storage.ts) | .source |= decoded) | sort_by(.name))}
+            '
+            ;;
+    esac
+}
+
+# what gets saved to the repo: the export with stable key order, minus
+# data that rebuilds itself
+file_store() {
+    local stored="$1" path="$2"
+    case "$stored" in
+        tampermonkey.txt)
+            # MFL Web caches league data as objects with a "saved" timestamp
+            # (stored by Tampermonkey as "o" + JSON); drop those, keep its settings
+            jq -S '
+                def mfl_cache: type == "string" and startswith("o{")
+                    and ((try (.[1:] | fromjson) catch null) | type == "object" and has("saved"));
+                .scripts |= map(
+                    if .name == "MFL Web" and (.storage.data | type) == "object"
+                    then .storage.data |= with_entries(select(.value | mfl_cache | not))
+                    else . end)
+            ' "$path"
+            ;;
+        *) jq -S . "$path" ;;
+    esac
+}
+
+###
+# Helpers
+###
+
+die() {
+    echo "error: $*" >&2
+    exit 1
+}
+
+firefox_profile_dir() {
+    local ini="${firefox_support}/profiles.ini" rel
+
+    [[ -r "$ini" ]] || die "no Firefox profiles.ini at ${ini}"
+
+    # the profile this Firefox install opens by default
+    rel=$(awk -F= '/^\[Install/ { inst = 1; next } /^\[/ { inst = 0 } inst && $1 == "Default" { print $2; exit }' "$ini")
+    if [[ -z "$rel" ]]; then
+        rel=$(awk -F= '/^\[Profile/ { p = ""; d = 0 } $1 == "Path" { p = $2 } $1 == "Default" && $2 == "1" { d = 1 } d && p { print p; exit }' "$ini")
+    fi
+    [[ -n "$rel" ]] || die "could not find the default Firefox profile in ${ini}"
+
+    echo "${firefox_support}/${rel}"
+}
+
+# the internal moz-extension:// host for an installed extension
+ext_uuid() {
+    local id="$1" prefs uuid
+
+    prefs="$(firefox_profile_dir)/prefs.js"
+    uuid=$(sed -n 's/^user_pref("extensions.webextensions.uuids", "\(.*\)");$/\1/p' "$prefs" |
+        sed 's/\\"/"/g' |
+        jq -r --arg id "$id" '.[$id] // empty')
+
+    [[ -n "$uuid" ]] || die "${id} is not installed in Firefox"
+    echo "$uuid"
+}
+
+open_ext_page() {
+    local ext="$1" url
+
+    url="moz-extension://$(ext_uuid "$(ext_id "$ext")")/$(ext_page "$ext")"
+    open -a Firefox "$url" || true
+    echo "Opened $(ext_name "$ext") settings in Firefox."
+    echo "  (if it didn't open, paste this into the address bar: ${url})"
+}
+
+# waits for a finished download matching glob, modified at or after start
+wait_for_download() {
+    local glob="$1" start="$2" waited=0 f size
+
+    while ((waited < wait_timeout)); do
+        shopt -s nullglob
+        for f in "${downloads_dir}"/${glob}; do
+            [[ -e "${f}.part" ]] && continue
+            (($(stat -f %m "$f") >= start)) || continue
+            size=$(stat -f %z "$f")
+            sleep 1
+            [[ "$size" == "$(stat -f %z "$f")" ]] || continue
+            shopt -u nullglob
+            echo "$f"
+            return 0
+        done
+        shopt -u nullglob
+        sleep 1
+        waited=$((waited + 1))
+    done
+
+    return 1
+}
+
+# warn about anything in a backup that looks like a credential.
+# scans the comparison view so encoded content (tampermonkey script source) is readable
+secret_scan() {
+    local stored="$1" path="$2" hits
+
+    hits=$(file_view "$stored" "$path" |
+        grep -inE '(password|passwd|secret|api[_-]?key|access[_-]?key|auth[_-]?token|bearer)[^[:alnum:]]{0,4}[=:][[:space:]]*\\?["'"'"'][^"'"'"'\\[:space:]]{6,}|://[^/@":[:space:]]+:[^/@"[:space:]]+@|eyJ[A-Za-z0-9_-]{20,}\.' |
+        cut -c1-160 | head -20 || true)
+    if [[ -n "$hits" ]]; then
+        echo "  warning: ${stored} has something that looks like a credential, check before committing:"
+        echo "$hits" | sed 's/^/    /'
+    fi
+}
+
+# runs the export flow for an extension; leaves "stored-name:download-path" lines in exported_files
+exported_files=()
+export_live() {
+    local ext="$1" start spec stored glob f
+
+    exported_files=()
+    start=$(date +%s)
+
+    echo
+    echo "== $(ext_name "$ext")"
+    open_ext_page "$ext"
+    echo "Click:"
+    ext_backup_steps "$ext"
+    echo "Waiting for the export in ${downloads_dir} (up to ${wait_timeout}s)..."
+
+    for spec in $(ext_files "$ext"); do
+        stored="${spec%%:*}"
+        glob="${spec#*:}"
+        f=$(wait_for_download "$glob" "$start") || die "timed out waiting for ${glob}"
+        file_validate "$stored" "$f" || die "$(basename "$f") doesn't look like a $(ext_name "$ext") export"
+        echo "  got $(basename "$f")"
+        exported_files+=("${stored}:${f}")
+    done
+}
+
+view_diff() {
+    local stored="$1" a="$2" a_label="$3" b="$4" b_label="$5"
+
+    diff -u --label "${stored} (${a_label})" --label "${stored} (${b_label})" \
+        <(file_view "$stored" "$a") <(file_view "$stored" "$b")
+}
+
+###
+# Commands
+###
+
+cmd_backup() {
+    local ext="$1" entry stored f dest changed=0
+
+    export_live "$ext"
+    mkdir -p "$backup_dir"
+
+    for entry in "${exported_files[@]}"; do
+        stored="${entry%%:*}"
+        f="${entry#*:}"
+        dest="${backup_dir}/${stored}"
+
+        if [[ -f "$dest" ]] && diff -q <(file_view "$stored" "$dest") <(file_view "$stored" "$f") >/dev/null; then
+            echo "  ${stored}: no changes since last backup"
+        else
+            [[ -f "$dest" ]] && view_diff "$stored" "$dest" "previous" "$f" "new" | sed 's/^/    /' || true
+            file_store "$stored" "$f" >"$dest"
+            echo "  ${stored}: saved"
+            secret_scan "$stored" "$dest"
+            changed=1
+        fi
+        rm -f "$f"
+    done
+
+    if [[ "$changed" == 1 ]]; then
+        echo "  review: git -C ${__root_dir} diff -- assets/browser-extension-config"
+    fi
+}
+
+cmd_diff() {
+    local ext="$1" entry stored f dest status=0
+
+    export_live "$ext"
+
+    for entry in "${exported_files[@]}"; do
+        stored="${entry%%:*}"
+        f="${entry#*:}"
+        dest="${backup_dir}/${stored}"
+
+        if [[ ! -f "$dest" ]]; then
+            echo "  ${stored}: no backup yet (run: ${__filename} backup ${ext})"
+            status=1
+        elif view_diff "$stored" "$dest" "backup" "$f" "live"; then
+            echo "  ${stored}: live matches backup"
+        else
+            status=1
+        fi
+        rm -f "$f"
+    done
+
+    return "$status"
+}
+
+cmd_restore() {
+    local ext="$1" spec stored dest
+
+    for spec in $(ext_files "$ext"); do
+        stored="${spec%%:*}"
+        [[ -f "${backup_dir}/${stored}" ]] || die "no backup for ${stored} (run: ${__filename} backup ${ext})"
+    done
+
+    echo
+    echo "== $(ext_name "$ext")"
+    open_ext_page "$ext"
+
+    for spec in $(ext_files "$ext"); do
+        stored="${spec%%:*}"
+        dest="${backup_dir}/${stored}"
+
+        printf '%s' "$dest" | pbcopy
+        echo "Click: $(file_import_step "$stored")"
+        echo "  In the file picker: ⌘⇧G, ⌘V, Return (path is on your clipboard)"
+        echo "  ${dest}"
+        read -r -p "  Press Return when done..." </dev/tty
+    done
+
+    if [[ "$ext" == cad ]]; then
+        echo "Note: Import Expressions adds to the existing list; expressions not in the backup are kept."
+    fi
+    if [[ "$ext" == tampermonkey ]]; then
+        echo "Note: import installs or overwrites the backed up scripts; scripts not in the backup are kept."
+    fi
+    echo "Verify with: ${__filename} diff ${ext}"
+}
+
+main() {
+    local cmd="${1:-}" target="${2:-}" ext list
+
+    case "$cmd" in
+        -h | --help | help | "")
+            print_usage
+            exit
+            ;;
+        backup | diff | restore) ;;
+        *)
+            print_usage
+            exit 1
+            ;;
+    esac
+
+    case "$target" in
+        all) list="$all_extensions" ;;
+        ublock | cad | tampermonkey) list="$target" ;;
+        *)
+            print_usage
+            exit 1
+            ;;
+    esac
+
+    command -v jq >/dev/null || die "jq is required"
+
+    local status=0
+    for ext in $list; do
+        "cmd_${cmd}" "$ext" || status=1
+    done
+    exit "$status"
+}
+
+main "$@"

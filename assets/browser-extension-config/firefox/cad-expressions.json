@@ -1,0 +1,227 @@
+{
+  "default": [
+    {
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "LocalStorage",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "expression": "*.amazon.com",
+      "id": "NTXptLrV6",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "expression": "*.auth.staylive.io",
+      "id": "0m7beOzyQJ",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "expression": "*.dashnet.org",
+      "id": "w9VK_GkVC1",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [
+        "ServiceWorkers",
+        "PluginData",
+        "LocalStorage",
+        "IndexedDB",
+        "Cache"
+      ],
+      "cookieNames": [],
+      "expression": "*.google.com",
+      "id": "4PVgW9WuKo",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "expression": "*.myfantasyleague.com",
+      "id": "psIHz7-jq0",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "expression": "*.orteil.dashnet.org",
+      "id": "S4BzUfh7s-",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "expression": "*.staylive.io",
+      "id": "f1TJTTVOb",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "expression": "*.united.com",
+      "id": "6WlKqxciS",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "LocalStorage",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "expression": "*.wntlivescores.com",
+      "id": "7llvCUgIge",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "expression": "*.wnttv.com",
+      "id": "mQXKgsjlIX",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "expression": "auth.staylive.io",
+      "id": "V2xjSDYZuj",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [
+        "ServiceWorkers",
+        "LocalStorage",
+        "IndexedDB",
+        "Cache",
+        "PluginData"
+      ],
+      "cookieNames": [],
+      "expression": "card-tau-teal.vercel.app",
+      "id": "WOHn91cZN",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [
+        "ServiceWorkers",
+        "PluginData",
+        "LocalStorage",
+        "IndexedDB",
+        "Cache"
+      ],
+      "cookieNames": [],
+      "expression": "espn.com",
+      "id": "CypRK7W8C_",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "LocalStorage",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "expression": "github.com",
+      "id": "l0JQ9zoRqh",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "expression": "orteil.dashnet.org",
+      "id": "PFuujOCQij",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "LocalStorage",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "expression": "secure.web.plus.espn.com",
+      "id": "MfQPaFwtdp",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanAllCookies": false,
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "expression": "shows-iota.vercel.app",
+      "id": "YC7QVb8BGx",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "expression": "twitch.tv",
+      "id": "L_z9EvVd5j",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [
+        "Cache",
+        "IndexedDB",
+        "PluginData",
+        "ServiceWorkers"
+      ],
+      "cookieNames": [],
+      "expression": "united.com",
+      "id": "ojafKFLtQ",
+      "listType": "WHITE",
+      "storeId": "default"
+    },
+    {
+      "cleanSiteData": [],
+      "cookieNames": [],
+      "expression": "wnttv.com",
+      "id": "HbAlxw3By",
+      "listType": "WHITE",
+      "storeId": "default"
+    }
+  ]
+}
