@@ -66,16 +66,17 @@ alias glg="git lg"
 alias gs="git s"
 
 alias k=kubectl
-if is kubectl; then
+# brew installs _kubectl into site-functions; only generate it where nothing provides one (apt)
+if is kubectl && (( ! $+_comps[kubectl] )); then
   source <(kubectl completion zsh)
-  complete -F __start_kubectl k
 fi
 
 alias chat='mkdir -p "${HOME}/tmp/chat" && cd "${HOME}/tmp/chat" && claude'
 
 alias f=fuck
+# load thefuck's alias on first use instead of on every shell start
 if is thefuck; then
-  source <(thefuck --alias)
+  fuck() { unfunction fuck; eval "$(thefuck --alias)"; fuck "$@" }
 fi
 
 # Setup hooks for config and binaries on local machine
@@ -87,7 +88,10 @@ fi
 [[ -d "${HOME}/bin" ]] && export PATH="${PATH}:${HOME}/bin"
 
 # Setup location of diff-highlight for .gitconfig
-if is brew; then
+if [[ -n "${HOMEBREW_PREFIX:-}" && -d "${HOMEBREW_PREFIX}/opt/git" ]]; then
+  # same path `brew --prefix git` returns, without running brew
+  export __WORKSTATION_DIFF_HIGHLIGHT_PREFIX="${HOMEBREW_PREFIX}/opt/git"
+elif is brew; then
   export __WORKSTATION_DIFF_HIGHLIGHT_PREFIX="$(brew --prefix git)"
 else
   export __WORKSTATION_DIFF_HIGHLIGHT_PREFIX="/usr"
