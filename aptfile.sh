@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+set -o errexit
+set -o pipefail
+set -o nounset
+[[ "${TRACE:-}" ]] && set -o xtrace
+
 # Homebrew doesn't work on linux arm.
 # Trying out using this to mirror brew file for linux arm.
 
@@ -7,7 +12,12 @@
 # used for packages: kubectl
 
 # get latest and strip patch
-readonly kubernetes_latest=$(curl -L -s https://dl.k8s.io/release/stable.txt | cut -d '.' -f 1,2 )
+kubernetes_latest=$(curl -fsSL https://dl.k8s.io/release/stable.txt | cut -d '.' -f 1,2)
+if [[ ! "$kubernetes_latest" =~ ^v[0-9]+\.[0-9]+$ ]]; then
+    echo "could not determine latest kubernetes version (got '${kubernetes_latest}')" >&2
+    exit 1
+fi
+readonly kubernetes_latest
 # keyrings dir only exists by default on debian 12+/ubuntu 22.04+
 sudo mkdir -p -m 0755 /etc/apt/keyrings
 # version does not matter here, same key used for all versions
