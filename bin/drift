@@ -1,0 +1,285 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+[[ "${TRACE:-}" ]] && set -o xtrace
+
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__filename="$(basename "${BASH_SOURCE[0]}")"
+__root_dir="$(cd "$(dirname "${__dir}")" && pwd)"
+
+source "${__root_dir}/lib/drift.sh"
+
+# longest detail shown per entry before pointing at the file instead
+readonly detail_max_lines="${DRIFT_DETAIL_MAX_LINES:-300}"
+
+print_usage() {
+    cat <<EOF
+${__filename} -- review what changed outside the workstation repo over time
+
+station quietly records changes as it runs: files apps edited before station
+overwrote them, upstream changes (p10k template and wizard since your last
+merge, oh-my-zsh plugins, zsh-autosuggestions and zsh-syntax-highlighting
+docs), new iTerm profile settings, version bumps, brew caveats, new macOS
+defaults keys and untracked brew packages. Read them
+whenever you like. Reviewing marks nothing, so you can review as often as you want.
+
+Usage: ${__filename} COMMAND [options]
+
+Commands:
+  review              Show unreviewed changes grouped by app
+      --all           Include changes already marked done
+      --summary       Ask claude to summarize what changed and what's worth adopting
+  done                Mark everything currently unreviewed as reviewed
+  status              Count unreviewed changes
+  path                Print where the journal and saved files live
+
+  -h                  Display this help message
+
+Station prints a reminder once the oldest unreviewed change is
+\${WORKSTATION_DRIFT_MAX_DAYS:-60} days old.
+EOF
+}
+
+fmt_date() {
+    date -r "$1" +%F 2>/dev/null || date -d "@$1" +%F
+}
+
+kind_title() {
+    case "$1" in
+        drift) echo "Changed outside the repo" ;;
+        upstream) echo "Upstream changes" ;;
+        version) echo "Version changes" ;;
+        caveats) echo "Brew caveats" ;;
+        defaults) echo "New macOS defaults keys" ;;
+        *) echo "$1" ;;
+    esac
+}
+
+show_detail() {
+    local file="${drift_dir}/$1"
+    local lines
+
+    [[ -f "$file" ]] || {
+        echo "    (detail missing: ${file})"
+        return
+    }
+
+    lines=$(wc -l <"$file" | tr -d ' ')
+    sed -n "1,${detail_max_lines}p" "$file" | sed 's/^/    | /'
+    if ((lines > detail_max_lines)); then
+        echo "    | ... $((lines - detail_max_lines)) more lines: ${file}"
+    fi
+}
+
+# print entries (journal lines on stdin) grouped by kind then subject
+#   drift, caveats: only the latest detail matters (it's the current state)
+#   upstream, defaults: every detail, oldest first (each covers different changes)
+#   version: just the messages, which together show the whole span
+render() {
+    local entries last_kind="" last_group=""
+    local ts kind subject message detail group
+    local -a details=()
+
+    entries=$(sort -t $'\t' -k2,2 -k3,3 -k1,1n)
+    [[ -n "$entries" ]] || return 0
+
+    flush_group() {
+        local d
+        [[ "${#details[@]}" -gt 0 ]] || return 0
+        case "$last_kind" in
+            drift | caveats) show_detail "${details[${#details[@]} - 1]}" ;;
+            *) for d in "${details[@]}"; do show_detail "$d"; done ;;
+        esac
+        details=()
+    }
+
+    while IFS=$'\t' read -r ts kind subject message detail; do
+        group="${kind}/${subject}"
+
+        if [[ "$group" != "$last_group" ]]; then
+            flush_group
+            [[ -n "$last_group" ]] && echo
+
+            if [[ "$kind" != "$last_kind" ]]; then
+                echo "=== $(kind_title "$kind")"
+                echo
+            fi
+            echo "--- ${subject}"
+            last_group="$group"
+            last_kind="$kind"
+        fi
+
+        echo "  $(fmt_date "$ts")  ${message}"
+        [[ -n "$detail" ]] && details+=("$detail")
+    done <<<"$entries"
+
+    flush_group
+}
+
+# what's already been adopted, so the summary doesn't re-recommend it:
+# the p10k commit .p10k.zsh was last merged with, and repo commits since the oldest entry
+adopted_context() {
+    local oldest="$1"
+    local base date commits
+
+    read -r base date <<<"$(drift_read_base "${__root_dir}/assets/p10k/merged-base")"
+    if [[ -n "$base" ]]; then
+        echo "dotfiles/.p10k.zsh was last merged with powerlevel10k commit ${base:0:7} (${date})."
+        echo "Powerlevel10k entries only cover changes after it; everything before is already in."
+        echo
+    fi
+
+    commits=$(git -C "$__root_dir" log --since="@${oldest}" --date=short --format='%h %ad %s' 2>/dev/null || true)
+    if [[ -n "$commits" ]]; then
+        echo "Repo commits since the oldest entry (I may have already adopted some changes):"
+        printf '%s\n' "$commits"
+    else
+        echo "No repo commits since the oldest entry."
+    fi
+}
+
+summarize() {
+    local text="$1" oldest="$2"
+    local context
+
+    if ! command -v claude >/dev/null; then
+        echo "claude isn't installed; showing the full review instead" >&2
+        printf '%s\n' "$text"
+        return
+    fi
+
+    context=$(adopted_context "$oldest")
+
+    printf '%s\n' "$text" | claude -p "$(
+        cat <<EOF
+I keep my dotfiles and app config in a git repo at ${__root_dir} and a script
+(station) copies them over the live files on every run, so my settings stay
+consistent. The downside is I miss changes that new versions of apps and tools
+make. Below, on stdin, is a journal of what changed outside the repo since I
+last reviewed:
+
+- "Changed outside the repo": a live file or app setting differed from what
+  station installed (an app, installer or I changed it), or packages are
+  installed that the Brewfile doesn't list. Station has since overwritten it.
+- "Upstream changes": commits to what my config was generated from or
+  documented by: Powerlevel10k's lean template and its configure wizard, the
+  oh-my-zsh plugins I use, and the zsh-autosuggestions and
+  zsh-syntax-highlighting READMEs. Also settings in iTerm's built-in default
+  profile that my profile doesn't set (usually newer features).
+- "Version changes": with links to release notes.
+- "Brew caveats" and "New macOS defaults keys".
+
+What I've already adopted:
+
+${context}
+
+Write a short summary grouped by app. For each, say what changed and whether
+it's worth adopting into the repo, naming the exact setting, line or file
+(e.g. dotfiles/.zshrc, dotfiles/.p10k.zsh, assets/rectangle/RectangleConfig.json,
+assets/iterm/com.googlecode.iterm2.plist, assets/macos/defaults.txt, Brewfile).
+Don't recommend anything the repo commits above already took care of. If you
+recommend merging newer Powerlevel10k changes, remind me to update
+assets/p10k/merged-base afterwards. For version bumps, say what's likely to
+matter for my config if you know it, and point at the release notes. Call out
+noise as noise in one line rather than explaining it. Put anything I should
+act on in a short list at the end. Plain text, no preamble.
+EOF
+    )"
+}
+
+cmd_review() {
+    local all=false summary=false entries text since
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --all) all=true ;;
+            --summary) summary=true ;;
+            *)
+                echo "unknown option: $1" >&2
+                print_usage
+                exit 1
+                ;;
+        esac
+        shift
+    done
+
+    if [[ "$all" == true ]]; then
+        entries=$(cat "$drift_journal" 2>/dev/null || true)
+    else
+        entries=$(drift_pending)
+    fi
+
+    if [[ -z "$entries" ]]; then
+        since=$(drift_reviewed_at done)
+        if ((since > 0)); then
+            echo "Nothing new since your last review on $(fmt_date "$since"). Use --all to see everything."
+        else
+            echo "Nothing recorded yet. Changes show up here as station runs."
+        fi
+        return
+    fi
+
+    text=$(render <<<"$entries")
+
+    if [[ "$summary" == true ]]; then
+        summarize "$text" "$(cut -f1 <<<"$entries" | sort -n | head -1)"
+    elif [[ -t 1 ]]; then
+        printf '%s\n' "$text" | "${PAGER:-less}"
+    else
+        printf '%s\n' "$text"
+    fi
+
+    if [[ "$all" == false ]]; then
+        echo
+        echo "When you're done with these, run: ${__filename} done"
+    fi
+}
+
+cmd_done() {
+    local pending newest count
+
+    pending=$(drift_pending)
+    if [[ -z "$pending" ]]; then
+        echo "Nothing to mark."
+        return
+    fi
+
+    count=$(wc -l <<<"$pending" | tr -d ' ')
+    newest=$(cut -f1 <<<"$pending" | sort -n | tail -1)
+
+    drift_init
+    echo "${newest} $(date +%s)" >"$drift_reviewed_file"
+    echo "Marked ${count} change(s) across $(cut -f3 <<<"$pending" | sort -u | wc -l | tr -d ' ') app(s) as reviewed."
+}
+
+cmd_status() {
+    local pending oldest
+
+    pending=$(drift_pending)
+    if [[ -z "$pending" ]]; then
+        echo "No unreviewed changes."
+        return
+    fi
+
+    oldest=$(cut -f1 <<<"$pending" | sort -n | head -1)
+    echo "$(wc -l <<<"$pending" | tr -d ' ') unreviewed change(s) since $(fmt_date "$oldest"):"
+    cut -f2,3 <<<"$pending" | sort | uniq -c | awk -F'\t' '{ printf "  %s  %s\n", $1, $2 }'
+}
+
+main() {
+    case "${1:-}" in
+        review) shift && cmd_review "$@" ;;
+        done) cmd_done ;;
+        status) cmd_status ;;
+        path) echo "$drift_dir" ;;
+        -h | --help | help) print_usage ;;
+        *)
+            print_usage
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"

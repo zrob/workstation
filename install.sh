@@ -22,6 +22,7 @@ readonly setup_ordered_list=(
     setup_dotfiles
     setup_doh_policy
     setup_browser_ext_check
+    setup_drift
 )
 
 readonly manual_only_setups=(
@@ -38,6 +39,7 @@ __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Load installers
 ###
 for f in "${__dir}"/installers/*.sh; do source "$f"; done
+source "${__dir}/lib/drift.sh"
 
 run_setups=()
 skip_setups=()

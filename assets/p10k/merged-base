@@ -1,0 +1,8 @@
+# The powerlevel10k commit that dotfiles/.p10k.zsh was last merged with: config/p10k-lean.zsh
+# from this commit was three-way merged into .p10k.zsh, keeping local edits and wizard choices.
+#
+# drift reports p10k template and wizard changes made after this commit. After merging newer
+# upstream changes into .p10k.zsh, replace the line below with the commit you merged and its date.
+#
+# commit                                   date
+50a35cc8d9f1488d18fb8aea6cddcfc31189cc9f 2026-11-19
