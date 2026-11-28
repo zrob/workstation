@@ -27,6 +27,18 @@ plugins+=(zsh-syntax-highlighting) #ensure this plugin is listed last
 # load nvm on first use of nvm/node/npm/npx/etc. add other npm global commands to lazy-cmd
 zstyle ':omz:plugins:nvm' lazy yes
 
+# station runs oh-my-zsh's upgrade, so skip its own update prompt
+zstyle ':omz:update' mode disabled
+
+# let docker completion understand stacked flags like `docker exec -it <TAB>`.
+# side effect: for flags that take a value, type a space first (`-u <TAB>`, not `-u<TAB>`)
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
+
+# suggest what usually follows the last command, then the most recent match,
+# then fall back to tab completion when history has nothing
+ZSH_AUTOSUGGEST_STRATEGY=(match_prev_cmd history completion)
+
 source "${ZSH}/oh-my-zsh.sh"
 
 # put nvm's default node on PATH without loading nvm, so the prompt (and node scripts) see it.
@@ -61,6 +73,7 @@ export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
 export ZSH_HIGHLIGHT_STYLES[bracket-error]='bg=red'
 
 export PATH="${PATH}:${HOME}/.workstation/bin"
+export PATH="${PATH}:${HOME}/.local/bin"
 export EDITOR=nano
 export TERM=xterm-256color
 
